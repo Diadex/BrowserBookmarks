@@ -103,7 +103,7 @@ export default function App() {
   const addTab = () => {
     const newTab = {
       id: generateRandomId(),
-      label: `Tab is a wonderful name for a Tab ${tabs.length + 1}`,
+      label: `Tab ${tabs.length + 1}`,
       to: `/${generateRandomId()}`,
     };
     setTabs([...tabs, newTab]);
