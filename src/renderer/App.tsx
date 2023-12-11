@@ -34,11 +34,6 @@ function Hello() {
     setUrlText(url);
   };
 
-  return (
-    <div>
-=======
-
-function Hello() {
   let mainWindow: BrowserWindow | null = null;
   const navigate = useNavigate();
   const [isBookmarkOpen, setIsBookmarkOpen] = useState(false);
@@ -70,7 +65,7 @@ function Hello() {
     setAdditionalDivs((prevDivs) => prevDivs.filter((div, i) => i !== index));
   };
   return (
-    <>
+    <div>
 
       <h1>Centered Text:</h1>
       <p>{centeredText}</p>
@@ -98,16 +93,18 @@ function Hello() {
             <img src={home} style={{ width: '100%', height: '100%' }} />
           </button>
         </div>
-        
-        
+
+
       <MenuBar onGoClick={handleGoClick} />
       <div className="Web">
         <iframe
+          title="web"
           src={urlText}
           width={iframeWidth}
           height={iframeHeight}
           allowFullScreen
         ></iframe>
+      </div>
 
 
         <div >
@@ -187,7 +184,7 @@ function Hello() {
           </a>
         </div>
       </div>
-    </>
+    </div>
 
   );
 }
