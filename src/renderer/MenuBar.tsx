@@ -32,10 +32,10 @@ function MenuBar({ onGoClick }: MenuBarProps) {
     window.location.reload();
     setRefreshIconSrc(cancel);
   };
-
-
-
   
+
+
+
 
 
   const [additionalDivs, setAdditionalDivs] = useState([]);
@@ -46,14 +46,26 @@ function MenuBar({ onGoClick }: MenuBarProps) {
   const handleCancelClick = (index: any) => {
     setAdditionalDivs((prevDivs) => prevDivs.filter((div, i) => i !== index));
   };
+
+  const handleGoBackClick = () => {
+    window.history.back();
+  };
+
+  const handleGoForwardClick = () => {
+    window.history.forward();
+  };
   return (
     <div className="MenuBar">
       <div style={{ display: 'flex', alignItems: 'left' }}>
-        <button style={{ width: 25, height: 25, padding: 0, fontSize: 18, fontWeight: "bold" }}>
+        <button style={{ width: 25, height: 25, padding: 0, fontSize: 18, fontWeight: "bold" }}
+          onClick={handleGoBackClick}
+        >
           <img src={arrowBack} style={{ width: '100%', height: '100%' }} />
         </button>
 
-        <button style={{ width: 25, height: 25, padding: 0, fontSize: 18, fontWeight: "bold", marginLeft: 10 }}>
+        <button style={{ width: 25, height: 25, padding: 0, fontSize: 18, fontWeight: "bold", marginLeft: 10 }}
+          onClick={handleGoForwardClick}
+        >
           <img src={arrowForward} style={{ width: '100%', height: '100%' }} />
         </button>
 
