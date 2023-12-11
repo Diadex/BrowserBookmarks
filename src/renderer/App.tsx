@@ -25,22 +25,18 @@ function Tab({ to, label, onRemove }: TabProps) {
         <div className="tab_open">
           <div className="tab_format">
             <span className="tab_writing">{label}</span>
-            <div style={{ width: 50 }}>
-              <button onClick={onRemove} type="button" className="tab_close">
-                X
-              </button>
-            </div>
+            <button onClick={onRemove} type="button" className="tab_close">
+              X
+            </button>
           </div>
         </div>
       ) : (
         <div className="tab">
           <div className="tab_format">
             <span className="tab_writing">{label}</span>
-            <div style={{ width: 50 }}>
-              <button onClick={onRemove} type="button" className="tab_close">
-                X
-              </button>
-            </div>
+            <button onClick={onRemove} type="button" className="tab_close">
+              X
+            </button>
           </div>
         </div>
       )}
@@ -76,6 +72,7 @@ function Hello({ label }: { label: string }) {
           width: '100%',
           paddingLeft: 0,
           marginLeft: -10,
+          paddingTop: 89,
           display: 'flex',
           justifyContent: 'flex-start',
         }}
@@ -106,7 +103,7 @@ export default function App() {
   const addTab = () => {
     const newTab = {
       id: generateRandomId(),
-      label: `Tab ${tabs.length + 1}`,
+      label: `Tab is a wonderful name for a Tab ${tabs.length + 1}`,
       to: `/${generateRandomId()}`,
     };
     setTabs([...tabs, newTab]);

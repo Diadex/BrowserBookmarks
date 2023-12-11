@@ -4,6 +4,9 @@
  */
 .All {
   width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
 }
 
  body {
@@ -79,9 +82,9 @@ a:hover {
 
 
 /* MenuBar container */
-.MenuBar {
+.MenuBar { /*not fixed*/
   position: fixed;
-  top: 0;
+  top: 70px;
   left: 0;
   width: 100%;
   background-color: #333; /* Background color for the menu bar */
@@ -158,7 +161,8 @@ a:hover {
 
 .tab {
   flex-grow: 1;
-  padding: 8px 0px 8px 10px;
+  flex-shrink: 0;
+  padding: 8px 10px;
   background-color: #636363;
   border-radius: 3px 10px 0 0;
   border: 1px solid #515151;
@@ -170,9 +174,10 @@ a:hover {
   text-decoration: none;
   height: 17px;
   max-width: 100px;
-  width: auto; /* Initial width */
-  white-space: nowrap; /* Prevent text from wrapping */
-  overflow: hidden; /* Hide overflowing content */
+  min-width: 10px;
+  width: auto;
+  white-space: nowrap;
+  overflow: hidden;
   text-overflow: ellipsis;
   justify-content: space-between;
 }
@@ -197,24 +202,24 @@ a:hover {
 
 .tab_open {
   flex-grow: 1;
-  padding: 8px 0px 8px 10px;
-  min-width: 20px;
-  width: auto + 20px;
-  max-width: 200px;
-  border: 1px solid #8e6868;
-  border-radius: 3px 10px 0 0;
-  background-color: #8e5858;
+  flex-shrink: 0;
+  padding: 8px 10px;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out, border 0.1s ease-in-out;
+  transition: background-color 0.3s ease-in-out, border 0.3s ease-in-out, max-width 0.4s ease-in-out, margin 0.1s ease-out;
   color: #fff;
   font-size: 14px;
   text-decoration: none;
   height: 17px;
-  justify-content: space-between;
+  max-width: 200px;
+  min-width: 20px;
+  width: auto;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   justify-content: space-between;
+  border: 1px solid #8e6868;
+  border-radius: 3px 10px 0 0;
+  background-color: #8e5858;
   margin: 0px 1px;
 }
 
@@ -280,14 +285,15 @@ a:hover {
 
 .tabs {
   background-color: #4a4242;
-  height: auto;
+  height: 60px;
   width: 100vw;
-  padding: 5px 5px;
+  padding: 5px;
   position: fixed;
   top: 0;
-  display: flex; /* Make it a flex container */
-  align-items: center; /* Align items to the center vertically */
-  flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  flex-wrap: nowrap;
 }
 
 .link{
