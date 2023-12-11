@@ -19,7 +19,6 @@ function MenuBar({ onGoClick }: MenuBarProps) {
   const [refreshIconSrc, setRefreshIconSrc] = useState(refreshIcon);
   const [centeredText, setCenteredText] = useState('');
   const [isBookmarkerOpen, setIsBookmarkerOpen] = useState(false);
-
   const handleHomeClick = () => {
     const allTextContent = document.body.innerText; // Get all text content inside the body
     setCenteredText(allTextContent);
@@ -34,8 +33,11 @@ function MenuBar({ onGoClick }: MenuBarProps) {
     window.location.reload();
     setRefreshIconSrc(cancel);
   };
+  const goHome = () => {
+    window.location.reload();
+  };
 
-  const [additionalDivs, setAdditionalDivs] = useState<JSX.Element[]>([]);
+  const [additionalDivs, setAdditionalDivs] = useState([]);
 
   const handleAddButtonClick = () => {
     setAdditionalDivs((prevDivs) => [
@@ -47,30 +49,25 @@ function MenuBar({ onGoClick }: MenuBarProps) {
     setAdditionalDivs((prevDivs) => prevDivs.filter((_, i) => i !== index));
   };
 
+
+  const handleGoBackClick = () => {
+    window.history.back();
+  };
+
+  const handleGoForwardClick = () => {
+    window.history.forward();
+  };
   return (
     <div className="MenuBar">
       <div style={{ display: 'flex', alignItems: 'left' }}>
-        <button
-          style={{
-            width: 25,
-            height: 25,
-            padding: 0,
-            fontSize: 18,
-            fontWeight: 'bold',
-          }}
+        <button style={{ width: 25, height: 25, padding: 0, fontSize: 18, fontWeight: "bold" }}
+          onClick={handleGoBackClick}
         >
           <img src={arrowBack} style={{ width: '100%', height: '100%' }} />
         </button>
 
-        <button
-          style={{
-            width: 25,
-            height: 25,
-            padding: 0,
-            fontSize: 18,
-            fontWeight: 'bold',
-            marginLeft: 10,
-          }}
+        <button style={{ width: 25, height: 25, padding: 0, fontSize: 18, fontWeight: "bold", marginLeft: 10 }}
+          onClick={handleGoForwardClick}
         >
           <img src={arrowForward} style={{ width: '100%', height: '100%' }} />
         </button>
@@ -92,15 +89,8 @@ function MenuBar({ onGoClick }: MenuBarProps) {
           />
         </button>
 
-        <button
-          style={{
-            width: 25,
-            height: 25,
-            padding: 0,
-            fontSize: 18,
-            marginLeft: 10,
-          }}
-          onClick={handleHomeClick}
+        <button style={{ width: 25, height: 25, padding: 0, fontSize: 18, marginLeft: 10, }}
+          onClick={goHome}
         >
           <img src={home} style={{ width: '100%', height: '100%' }} />
         </button>

@@ -28,25 +28,23 @@ function Hello() {
     setUrlText(url);
   };
 
+
+  let mainWindow: BrowserWindow | null = null;
+  const navigate = useNavigate();
+  
   return (
     <div>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-        }}
-      >
-        <MenuBar onGoClick={handleGoClick} />
-        <div className="Web">
-          <iframe
-            title="web"
-            src={urlText}
-            width={iframeWidth}
-            height={iframeHeight}
-            allowFullScreen
-          ></iframe>
-        </div>
+      <div style={{ width:"100%",paddingLeft:0,marginLeft:-10,display:"flex",justifyContent:"flex-start"}}>   
+      <MenuBar onGoClick={handleGoClick} />
+      <div className="Web">
+        <iframe
+          title="web"
+          src={urlText}
+          width={iframeWidth}
+          height={iframeHeight}
+          allowFullScreen
+        ></iframe>
+      </div>
       </div>
     </div>
   );
