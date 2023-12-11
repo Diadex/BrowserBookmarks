@@ -1,17 +1,11 @@
-
-import { MemoryRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import {
+  MemoryRouter as Router,
+  Routes,
+  Route,
+} from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import './App.css';
 import MenuBar from './MenuBar';
-import icon from '../../assets/icon.svg';
-import { BrowserWindow } from 'electron';
-import refreshIcon from './refresh.svg'; // Path to your SVG file
-import arrowBack from './arrow-back.svg'; // Path to your SVG file
-import arrowForward from './arrow-forward.svg'; // Path to your SVG file
-import bookmark from './bookmark.svg'; // Path to your SVG file
-import home from './home.svg'; // Path to your SVG file
-import cancel from './cancel.svg'; // Path to your SVG file
-import addIcon from './add-icon.svg'; // Path to your SVG file
 
 function Hello() {
   const [urlText, setUrlText] = useState('https://www.bing.com');
@@ -34,14 +28,13 @@ function Hello() {
     setUrlText(url);
   };
 
+
   let mainWindow: BrowserWindow | null = null;
   const navigate = useNavigate();
   
   return (
     <div>
       <div style={{ width:"100%",paddingLeft:0,marginLeft:-10,display:"flex",justifyContent:"flex-start"}}>   
-
-
       <MenuBar onGoClick={handleGoClick} />
       <div className="Web">
         <iframe
@@ -53,10 +46,7 @@ function Hello() {
         ></iframe>
       </div>
       </div>
-      
-     
     </div>
-
   );
 }
 
