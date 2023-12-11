@@ -94,25 +94,31 @@ a:hover {
 
 
 .tab {
-  flex: auto;
+  flex-grow: 1;
   padding: 8px 0px 8px 10px;
   background-color: #636363;
-  border-radius: 10px 0 0 0;
+  border-radius: 3px 10px 0 0;
   border: 1px solid #515151;
-  margin-right: 5px;
+  margin-right: 0.2px;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out, border 0.1s ease-in-out;
+  transition: background-color 0.3s ease-in-out, border 0.3s ease-in-out, max-width 0.4s ease-in-out, margin 0.1s ease-out;
   color: #fff;
   font-size: 14px;
   text-decoration: none;
   height: 17px;
-  min-width: 90px;
+  max-width: 100px;
+  width: auto; /* Initial width */
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden; /* Hide overflowing content */
+  text-overflow: ellipsis;
   justify-content: space-between;
 }
 
 .tab:hover {
+  min-width: 20px;
+  max-width: 200px;
+  margin: 0px 3px;
   border: 1px solid #8e6868;
-  border-radius: 10px 0 0 0;
   background-color: #8e5858;
 }
 
@@ -121,23 +127,42 @@ a:hover {
   color: #ffffff;
 }
 
-.tab:last-child {
-  margin-right: 0;
-}
-
 .tab.active {
   background-color: #fff;
   border-bottom: 1px solid #fff;
+}
+
+.tab_open {
+  flex-grow: 1;
+  padding: 8px 0px 8px 10px;
+  min-width: 20px;
+  width: auto + 20px;
+  max-width: 200px;
+  border: 1px solid #8e6868;
+  border-radius: 3px 10px 0 0;
+  background-color: #8e5858;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, border 0.1s ease-in-out;
+  color: #fff;
+  font-size: 14px;
+  text-decoration: none;
+  height: 17px;
+  justify-content: space-between;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  justify-content: space-between;
+  margin: 0px 1px;
 }
 
 .tab_add {
   padding: 3px 10px;
   background-color: #636363;
   border: 1px solid #5d5757;
-  border-radius: 0 10px 0 0;
-  margin-right: 5px;
+  border-radius: 10px 3px 0 0;
+  margin-right: 1px;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out, border 0.1s ease-in-out;
+  transition: background-color 0.2s ease-in-out, border 0.3s ease-in-out;
   color: #fff;
   font-size: 23px;
   text-decoration: none;
@@ -160,6 +185,7 @@ a:hover {
   align-items: flex-end;
   color: white;
   align-self: flex-end;
+  margin-left: 12px;
 }
 
 .tab_close:hover {
@@ -170,24 +196,35 @@ a:hover {
 }
 
 .tab_writing {
-  padding: 10px 0px;
   border: none;
   appearance: none;
   justify-content: flex-start;
   align-items: flex-start;
   align-self: flex-start;
   color: white;
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden; /* Hide overflowing content */
+  text-overflow: ellipsis;
+  justify-content: space-between;
+}
+
+.tab_format {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
 }
 
 .tabs {
   background-color: #4a4242;
-  height: 40px;
+  height: auto;
   width: 100vw;
   padding: 5px 5px;
   position: fixed;
   top: 0;
   display: flex; /* Make it a flex container */
   align-items: center; /* Align items to the center vertically */
+  flex-wrap: wrap;
 }
 
 .link{
