@@ -2,7 +2,11 @@
  * @NOTE: Prepend a `~` to css file paths that are in your node_modules
  *        See https://github.com/webpack-contrib/sass-loader#imports
  */
-body {
+.All {
+  width: 100vw;
+}
+
+ body {
   position: relative;
   color: white;
   height: 100vh;
@@ -17,7 +21,7 @@ body {
 
 }
 
-button {
+button.white {
   background-color: white;
   padding: 10px 20px;
   border-radius: 10px;
@@ -26,6 +30,18 @@ button {
   font-size: 1.3rem;
   box-shadow:
     0px 8px 28px -6px rgba(24, 39, 75, 0.12),
+    0px 18px 88px -4px rgba(24, 39, 75, 0.14);
+  transition: all ease-in 0.1s;
+  cursor: pointer;
+  opacity: 0.9;
+}
+
+button {
+  background-color: white;
+  border: none;
+  appearance: none;
+  font-size: 1.3rem;
+  box-shadow: 0px 8px 28px -6px rgba(24, 39, 75, 0.12),
     0px 18px 88px -4px rgba(24, 39, 75, 0.14);
   transition: all ease-in 0.1s;
   cursor: pointer;
@@ -123,3 +139,161 @@ a:hover {
     max-width: 100%; /* Full width on smaller screens */
   }
 }
+.outer-page {
+  position: relative;
+  background-color: #f0f0f0; /* Set the background color of the outer page */
+}
+
+.windowed-view {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  background-color: #ccc; /* Set the background color of the windowed view */
+  border: 1px solid #999; /* Add a border for visibility */
+}
+
+
+.tab {
+  flex-grow: 1;
+  padding: 8px 0px 8px 10px;
+  background-color: #636363;
+  border-radius: 3px 10px 0 0;
+  border: 1px solid #515151;
+  margin-right: 0.2px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out, border 0.3s ease-in-out, max-width 0.4s ease-in-out, margin 0.1s ease-out;
+  color: #fff;
+  font-size: 14px;
+  text-decoration: none;
+  height: 17px;
+  max-width: 100px;
+  width: auto; /* Initial width */
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden; /* Hide overflowing content */
+  text-overflow: ellipsis;
+  justify-content: space-between;
+}
+
+.tab:hover {
+  min-width: 20px;
+  max-width: 200px;
+  margin: 0px 3px;
+  border: 1px solid #8e6868;
+  background-color: #8e5858;
+}
+
+.tab a {
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.tab.active {
+  background-color: #fff;
+  border-bottom: 1px solid #fff;
+}
+
+.tab_open {
+  flex-grow: 1;
+  padding: 8px 0px 8px 10px;
+  min-width: 20px;
+  width: auto + 20px;
+  max-width: 200px;
+  border: 1px solid #8e6868;
+  border-radius: 3px 10px 0 0;
+  background-color: #8e5858;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, border 0.1s ease-in-out;
+  color: #fff;
+  font-size: 14px;
+  text-decoration: none;
+  height: 17px;
+  justify-content: space-between;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  justify-content: space-between;
+  margin: 0px 1px;
+}
+
+.tab_add {
+  padding: 3px 10px;
+  background-color: #636363;
+  border: 1px solid #5d5757;
+  border-radius: 10px 3px 0 0;
+  margin-right: 1px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, border 0.3s ease-in-out;
+  color: #fff;
+  font-size: 23px;
+  text-decoration: none;
+}
+
+.tab_add:hover {
+  border: 1px solid #8e6868;
+  background-color: #8e5858;
+}
+
+.tab_close {
+  background-color: rgba(147, 147, 147, 0);
+  border-radius: 6px;
+  appearance: none;
+  font-size: 0.9rem;
+  transition: all ease-in 0.1s;
+  cursor: pointer;
+  opacity: 0.6;
+  justify-content: flex-end;
+  align-items: flex-end;
+  color: white;
+  align-self: flex-end;
+  margin-left: 12px;
+}
+
+.tab_close:hover {
+  font-size: 0.9rem;
+  opacity: 1;
+  color: white;
+  background-color: rgb(147, 147, 147);
+}
+
+.tab_writing {
+  border: none;
+  appearance: none;
+  justify-content: flex-start;
+  align-items: flex-start;
+  align-self: flex-start;
+  color: white;
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden; /* Hide overflowing content */
+  text-overflow: ellipsis;
+  justify-content: space-between;
+}
+
+.tab_format {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+
+.tabs {
+  background-color: #4a4242;
+  height: auto;
+  width: 100vw;
+  padding: 5px 5px;
+  position: fixed;
+  top: 0;
+  display: flex; /* Make it a flex container */
+  align-items: center; /* Align items to the center vertically */
+  flex-wrap: wrap;
+}
+
+.link{
+  align-items: flex-end;
+  padding: 0px;
+  margin: 0px;
+}
+
+
