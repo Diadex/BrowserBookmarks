@@ -36,63 +36,25 @@ function Hello() {
 
   let mainWindow: BrowserWindow | null = null;
   const navigate = useNavigate();
-  const [isBookmarkOpen, setIsBookmarkOpen] = useState(false);
-  const [refreshIconSrc, setRefreshIconSrc] = useState(refreshIcon);
-  const [centeredText, setCenteredText] = useState("");
+  // const [isBookmarkOpen, setIsBookmarkOpen] = useState(false);
+ 
+
+  // const handleBookmarkClick = () => {
+  //   setIsBookmarkOpen((prev) => !prev);
+  // };
 
 
-  const handleRefreshClick = () => {
-    console.log('Refreshing...');
+  // const [additionalDivs, setAdditionalDivs] = useState([]);
 
-    window.location.reload();
-    setRefreshIconSrc(cancel);
-  };
-
-  const handleBookmarkClick = () => {
-    setIsBookmarkOpen((prev) => !prev);
-  };
-  const handleHomeClick = () => {
-    const allTextContent = document.body.innerText; // Get all text content inside the body
-    setCenteredText(allTextContent);
-  };
-
-  const [additionalDivs, setAdditionalDivs] = useState([]);
-
-  const handleAddButtonClick = () => {
-    setAdditionalDivs((prevDivs) => [...prevDivs, <div key={prevDivs.length}>TAB </div>]);
-  };
-  const handleCancelClick = (index: any) => {
-    setAdditionalDivs((prevDivs) => prevDivs.filter((div, i) => i !== index));
-  };
+  // const handleAddButtonClick = () => {
+  //   setAdditionalDivs((prevDivs) => [...prevDivs, <div key={prevDivs.length}>TAB </div>]);
+  // };
+  // const handleCancelClick = (index: any) => {
+  //   setAdditionalDivs((prevDivs) => prevDivs.filter((div, i) => i !== index));
+  // };
   return (
     <div>
-
-      <h1>Centered Text:</h1>
-      <p>{centeredText}</p>
-
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'left' }}>
-          <button style={{ width: 25, height: 25, padding: 0, fontSize: 18, fontWeight: "bold" }}>
-            <img src={arrowBack} style={{ width: '100%', height: '100%' }} />
-          </button>
-
-          <button style={{ width: 25, height: 25, padding: 0, fontSize: 18, fontWeight: "bold", marginLeft: 10 }}>
-            <img src={arrowForward} style={{ width: '100%', height: '100%' }} />
-          </button>
-
-          <button style={{ width: 25, height: 25, padding: 0, fontSize: 18, marginLeft: 10, }}
-
-            onClick={handleRefreshClick}>
-            <img src={refreshIconSrc} alt="Refresh Icon" style={{ width: '100%', height: '100%' }} />
-          </button>
-
-          <button style={{ width: 25, height: 25, padding: 0, fontSize: 18, marginLeft: 10, }}
-            onClick={handleHomeClick}>
-
-
-            <img src={home} style={{ width: '100%', height: '100%' }} />
-          </button>
-        </div>
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>   
 
 
       <MenuBar onGoClick={handleGoClick} />
@@ -107,7 +69,7 @@ function Hello() {
       </div>
 
 
-        <div >
+        {/* <div >
           <button style={{ width: 25, height: 25, padding: 0, fontSize: 18, fontWeight: "bold", marginLeft: 10 }}
             onClick={handleBookmarkClick}>
 
@@ -115,11 +77,11 @@ function Hello() {
           </button>
 
 
-        </div>
+        </div> */}
 
 
       </div>
-      {isBookmarkOpen && (
+      {/* {isBookmarkOpen && (
         <div style={{
           position: 'fixed',
           top: '0%',
@@ -149,41 +111,8 @@ function Hello() {
           ))}
 
         </div>
-      )}
-      <div>
-
-
-        <div className="Hello">
-          <img width="200" alt="icon" src={icon} />
-        </div>
-        <h1>electron-react-boilerplate</h1>
-        <div className="Hello">
-          <a
-            href="https://electron-react-boilerplate.js.org/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <button type="button">
-              <span role="img" aria-label="books">
-                📚
-              </span>
-              Read our docs
-            </button>
-          </a>
-          <a
-            href="https://github.com/sponsors/electron-react-boilerplate"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <button type="button">
-              <span role="img" aria-label="folded hands">
-                🙏
-              </span>
-              Donate
-            </button>
-          </a>
-        </div>
-      </div>
+      )} */}
+     
     </div>
 
   );
