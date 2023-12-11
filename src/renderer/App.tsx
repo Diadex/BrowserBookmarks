@@ -1,6 +1,9 @@
+
 import { MemoryRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-import icon from '../../assets/icon.svg';
+import { useState, useEffect } from 'react';
 import './App.css';
+import MenuBar from './MenuBar';
+import icon from '../../assets/icon.svg';
 import { BrowserWindow } from 'electron';
 import refreshIcon from './refresh.svg'; // Path to your SVG file
 import arrowBack from './arrow-back.svg'; // Path to your SVG file
@@ -10,7 +13,30 @@ import home from './home.svg'; // Path to your SVG file
 import cancel from './cancel.svg'; // Path to your SVG file
 import addIcon from './add-icon.svg'; // Path to your SVG file
 
-import { useState } from 'react';
+function Hello() {
+  const [urlText, setUrlText] = useState('https://www.bing.com');
+  const [iframeWidth, setIframeWidth] = useState(window.innerWidth);
+  const [iframeHeight, setIframeHeight] = useState(window.innerHeight - 40);
+
+  const handleResize = () => {
+    setIframeWidth(window.innerWidth);
+    setIframeHeight(window.innerHeight - 40);
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  const handleGoClick = (url: string) => {
+    setUrlText(url);
+  };
+
+  return (
+    <div>
+=======
 
 function Hello() {
   let mainWindow: BrowserWindow | null = null;
@@ -72,6 +98,16 @@ function Hello() {
             <img src={home} style={{ width: '100%', height: '100%' }} />
           </button>
         </div>
+        
+        
+      <MenuBar onGoClick={handleGoClick} />
+      <div className="Web">
+        <iframe
+          src={urlText}
+          width={iframeWidth}
+          height={iframeHeight}
+          allowFullScreen
+        ></iframe>
 
 
         <div >

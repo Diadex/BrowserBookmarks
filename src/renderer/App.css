@@ -24,7 +24,8 @@ button {
   border: none;
   appearance: none;
   font-size: 1.3rem;
-  box-shadow: 0px 8px 28px -6px rgba(24, 39, 75, 0.12),
+  box-shadow:
+    0px 8px 28px -6px rgba(24, 39, 75, 0.12),
     0px 18px 88px -4px rgba(24, 39, 75, 0.14);
   transition: all ease-in 0.1s;
   cursor: pointer;
@@ -52,9 +53,73 @@ a:hover {
   text-decoration: none;
 }
 
-.Hello {
+.Web {
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 20px 0;
+  width: 100%; /* Make the iframe container as wide as the window */
+}
+
+
+/* MenuBar container */
+.MenuBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #333; /* Background color for the menu bar */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Shadow for the menu bar */
+  display: flex;
+  align-items: center;
+}
+
+.NavigationButtons {
+  margin-left: 10px;
+}
+
+.NavigationButtons button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  margin-right: 10px;
+  font-size: 16px;
+}
+
+.AddressBar {
+  display: flex;
+  align-items: center;
+  background-color: #fff; /* Background color for the address bar */
+  height: 40px; /* Height of the address bar */
+  padding: 0 10px; /* Padding for the address bar */
+  border-bottom: 1px solid #ccc; /* Border to separate address bar from content */
+  border-radius: 20px; /* Rounded corners for the address bar */
+  flex: 1; /* AddressBar takes up remaining space */
+  max-width: calc(100% - 150px); /* Maximum width excluding NavigationButtons */
+}
+
+.AddressBar input {
+  flex: 1; /* Allow input to grow to fill space */
+  height: 100%;
+  border: none;
+  border-radius: 20px;
+  outline: none;
+  padding: 0 10px;
+  font-size: 16px;
+}
+
+.AddressBar button {
+  margin-left: 10px; /* Add space between input and button */
+  background: none; /* Remove the background */
+  border: none; /* Remove the border */
+  cursor: pointer; /* Ensure it's a pointer */
+  padding: 0; /* Remove padding */
+}
+
+/* Media query for smaller screens */
+@media screen and (max-width: 768px) {
+  .AddressBar {
+    max-width: 100%; /* Full width on smaller screens */
+  }
 }
