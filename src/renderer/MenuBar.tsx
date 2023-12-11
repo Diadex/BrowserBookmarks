@@ -18,7 +18,7 @@ function MenuBar({ onGoClick }: MenuBarProps) {
   const [isBookmarkOpen, setIsBookmarkOpen] = useState(false);
   const [refreshIconSrc, setRefreshIconSrc] = useState(refreshIcon);
   const [centeredText, setCenteredText] = useState("");
-
+  //textleri almaca
   const handleHomeClick = () => {
     const allTextContent = document.body.innerText; // Get all text content inside the body
     setCenteredText(allTextContent);
@@ -32,7 +32,9 @@ function MenuBar({ onGoClick }: MenuBarProps) {
     window.location.reload();
     setRefreshIconSrc(cancel);
   };
-  
+  const goHome = () => {
+    window.location.reload();
+  };
 
 
 
@@ -76,7 +78,7 @@ function MenuBar({ onGoClick }: MenuBarProps) {
         </button>
 
         <button style={{ width: 25, height: 25, padding: 0, fontSize: 18, marginLeft: 10, }}
-          onClick={handleHomeClick}
+          onClick={goHome}
         >
           <img src={home} style={{ width: '100%', height: '100%' }} />
         </button>
