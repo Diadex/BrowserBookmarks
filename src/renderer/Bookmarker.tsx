@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 
-const Bookmarker = () => {
+interface Bookmarker {
+  addTab: (value:number) => void;
+}
+
+function Bookmarker({addTab}: Bookmarker) {
   const [colorA, setColorA] = useState('white');
   const [colorB, setColorB] = useState('white');
   const [colorC, setColorC] = useState('white');
@@ -25,6 +29,8 @@ const Bookmarker = () => {
 
   const handleClickE = () => {
     setColorE(colorE === 'white' ? 'blue' : 'white');
+    // add tab'dan ekle
+    addTab(1)
   }
 
   return (

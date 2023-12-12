@@ -11,44 +11,44 @@ import addIcon from '../../assets/icons/add-icon.svg'; // Path to your SVG file
 import Bookmarker from './Bookmarker';
 
 interface MenuBarProps {
+  id: string
   onGoClick: (url: string) => void;
+  addTab: (value: number) => void;
+  tabId: string;
 }
 
-function MenuBar({ onGoClick }: MenuBarProps) {
+function MenuBar({id, onGoClick, addTab, tabId }: MenuBarProps) {
   const [isBookmarkOpen, setIsBookmarkOpen] = useState(false);
   const [refreshIconSrc, setRefreshIconSrc] = useState(refreshIcon);
   const [centeredText, setCenteredText] = useState('');
   const [isBookmarkerOpen, setIsBookmarkerOpen] = useState(false);
-  const handleHomeClick = () => {
-    const allTextContent = document.body.innerText; // Get all text content inside the body
-    setCenteredText(allTextContent);
-  };
+  const [additionalDivs, setAdditionalDivs] = useState([]);
+
   const handleBookmarkClick = () => {
+    // Customize behavior based on the tabId
+    console.log(`Bookmark clicked for tab with ID: ${tabId}`);
     setIsBookmarkOpen((prev) => !prev);
     setIsBookmarkerOpen((prev) => !prev);
   };
-  const handleRefreshClick = () => {
-    console.log('Refreshing...');
-
-    window.location.reload();
-    setRefreshIconSrc(cancel);
-  };
-  const goHome = () => {
-    window.location.reload();
-  };
-
-  const [additionalDivs, setAdditionalDivs] = useState([]);
 
   const handleAddButtonClick = () => {
+    // Customize behavior based on the tabId
+    console.log(`Add button clicked for tab with ID: ${tabId}`);
     setAdditionalDivs((prevDivs) => [
       ...prevDivs,
       <div key={prevDivs.length}>TAB </div>,
     ]);
   };
-  const handleCancelClick = (index: any) => {
+
+  const handleCancelClick = (index: number) => {
+    // Customize behavior based on the tabId
+    console.log(`Cancel button clicked for tab with ID: ${tabId}`);
     setAdditionalDivs((prevDivs) => prevDivs.filter((_, i) => i !== index));
   };
 
+  const goHome = () => {
+    window.location.reload();
+  };
 
   const handleGoBackClick = () => {
     window.history.back();
@@ -57,6 +57,17 @@ function MenuBar({ onGoClick }: MenuBarProps) {
   const handleGoForwardClick = () => {
     window.history.forward();
   };
+
+  const handleRefreshClick = () => {
+    const iframe = document.getElementById(id) as HTMLIFrameElement | null; // Replace with your actual iframe ID
+    if (iframe) {
+      console.log('Refreshing...');
+      iframe.src = iframe.src; // This will reload the iframe content
+    }
+    else console.log('cant refresh');
+    console.log("iframe ", iframe);
+  };
+
   return (
     <div className="MenuBar">
       <div style={{ display: 'flex', alignItems: 'left' }}>
@@ -167,7 +178,7 @@ function MenuBar({ onGoClick }: MenuBarProps) {
 
       {isBookmarkerOpen && (
         <div style={{ position: 'absolute', top: 0, right: 0, zIndex: 9999 }}>
-          <Bookmarker />
+          <Bookmarker addTab={addTab} />
         </div>
       )}
 

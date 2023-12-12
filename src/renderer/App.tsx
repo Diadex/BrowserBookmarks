@@ -44,7 +44,7 @@ function Tab({ to, label, onRemove }: TabProps) {
   );
 }
 
-function Hello({ url, onGoClick }: { url: string; onGoClick: (url: string) => void }) {
+function Hello({ id, url, onGoClick }: {id: string, url: string; onGoClick: (url: string) => void }) {
   const [iframeWidth, setIframeWidth] = useState(window.innerWidth);
   const [iframeHeight, setIframeHeight] = useState(window.innerHeight - 40);
 
@@ -60,33 +60,36 @@ function Hello({ url, onGoClick }: { url: string; onGoClick: (url: string) => vo
     };
   }, []);
 
-  const handleGoClick = (url: string) => {
-    onGoClick(url);
-  };
-
   return (
     <div>
-      <div
-        style={{
-          width: '100%',
-          paddingLeft: 0,
-          marginLeft: -10,
-          paddingTop: 89,
-          display: 'flex',
-          justifyContent: 'flex-start',
-        }}
-      >
-      <MenuBar onGoClick={handleGoClick} />
-      <div className="Web">
-        <iframe
-          title="web"
-          src={url}
-          width={iframeWidth}
-          height={iframeHeight}
-          allowFullScreen
-          ></iframe>
-      </div>
-      </div>
+      { url != "bookmarks" ? (
+        <div
+          style={{
+            width: '100%',
+            paddingLeft: 0,
+            marginLeft: -10,
+            paddingTop: 89,
+            display: 'flex',
+            justifyContent: 'flex-start',
+          }}
+        >
+          <div className="Web">
+            <iframe
+              id={id+url}
+              title="web"
+              src={url}
+              width={iframeWidth}
+              height={iframeHeight}
+              allowFullScreen
+              ></iframe>
+          </div>
+        </div>
+      ): (
+        <div style={{ alignItems: 'center', justifyContent: 'center', display: 'flex', width: "100%", height: "100vh", backgroundColor: "rgb(98, 168, 98)" }}>
+          <h3>This is a bookmark</h3>
+        </div>
+      )
+      }
     </div>
   );
 }
@@ -108,13 +111,24 @@ function App() {
     setTabUrls((prevUrls) => ({ ...prevUrls, [tabId]: url }));
   };
 
-  const addTab = () => {
-    const newTab = {
-      id: generateRandomId(),
-      label: `Tab ${tabs.length + 1}`,
-      to: `/${generateRandomId()}`,
-    };
-    setTabs([...tabs, newTab]);
+  const addTab = (value:number) => {
+    if (value == 0) {
+      const newTab = {
+        id: generateRandomId(),
+        label: `Tab ${tabs.length + 1}`,
+        to: `/${generateRandomId()}`,
+      };
+      setTabs([...tabs, newTab]);
+    }
+    else if (value == 1) {
+      const newTab = {
+        id: generateRandomId(),
+        label: `Bookmarks`,
+        to: `/${generateRandomId()}`,
+      };
+      setTabUrls((prevUrls) => ({ ...prevUrls, [newTab.id]: 'bookmarks' }));
+      setTabs([...tabs, newTab]);
+    }
   };
 
   const removeTab = (id: string) => {
@@ -126,7 +140,7 @@ function App() {
     <Router>
       <div className="All">
         <div className="tabs">
-          <button onClick={addTab} type="button" className="tab_add">
+          <button onClick={() => addTab(0)} type="button" className="tab_add">
             +
           </button>
           {tabs.map((tab) => (
@@ -138,17 +152,26 @@ function App() {
             />
           ))}
         </div>
-        {/* Conditionally render Hello component based on the route's path */}
+        {/* Conditionally render Hello component and pass tabId to MenuBar */}
         <Routes>
           {tabs.map((tab) => (
             <Route
               key={tab.id}
               path={tab.to}
               element={
-                <Hello
-                  url={tabUrls[tab.id]}
-                  onGoClick={(url) => handleGoClick(tab.id, url)}
-                />
+                <>
+                  <MenuBar
+                    id= {tab.id}
+                    onGoClick={(url) => handleGoClick(tab.id, url)}
+                    tabId={tab.id} // Pass tabId to MenuBar
+                    addTab={addTab}
+                  />
+                  <Hello
+                    id={tab.id}
+                    url={ tabUrls && tabUrls[tab.id]? tabUrls[tab.id] :'https://www.bing.com'}
+                    onGoClick={(url) => handleGoClick(tab.id, url)}
+                  />
+                </>
               }
             />
           ))}
