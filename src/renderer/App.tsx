@@ -1,11 +1,9 @@
-import {
-  MemoryRouter as Router,
-  Routes,
-  Route,
-} from 'react-router-dom';
+import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import './App.css';
 import MenuBar from './MenuBar';
+import * as fs from 'fs';
+import { Readability } from '@mozilla/readability';
 
 function Hello() {
   const [urlText, setUrlText] = useState('https://www.bing.com');
@@ -28,20 +26,46 @@ function Hello() {
     setUrlText(url);
   };
 
+  const handleSaveAsArticleClick = async () => {
+    await fetchHTML();
+  };
+
+  async function fetchHTML(): Promise<void> {
+    const iframe = document.getElementById(
+      'web-loader',
+    ) as HTMLIFrameElement | null;
+    if (iframe) {
+      const address = iframe.src;
+      console.log(address);
+      window.electron.ipcRenderer
+        .invoke('process-readable', address)
+        .then((result) => {
+          console.log(result);
+        });
+    }
+  }
 
   return (
     <div>
-      <div style={{ width:"100%",paddingLeft:0,marginLeft:-10,display:"flex",justifyContent:"flex-start"}}>
-      <MenuBar onGoClick={handleGoClick} />
-      <div className="Web">
-        <iframe
-          title="web"
-          src={urlText}
-          width={iframeWidth}
-          height={iframeHeight}
-          allowFullScreen
-        ></iframe>
-      </div>
+      <div
+        style={{
+          width: '100%',
+          paddingLeft: 0,
+          marginLeft: -10,
+          display: 'flex',
+          justifyContent: 'flex-start',
+        }}
+      >
+        <MenuBar onGoClick={handleGoClick} onSaveAsArticleClick={handleSaveAsArticleClick} />
+        <div className="Web">
+          <iframe
+            id="web-loader"
+            src={urlText}
+            width={iframeWidth}
+            height={iframeHeight}
+            allowFullScreen
+          ></iframe>
+        </div>
       </div>
     </div>
   );

@@ -11,3 +11,31 @@ export function resolveHtmlPath(htmlFileName: string) {
   }
   return `file://${path.resolve(__dirname, '../renderer/', htmlFileName)}`;
 }
+
+export function generateMarkdownFromArticle(
+  article: null | {
+    title: string;
+    content: string;
+    textContent: string;
+    length: number;
+    excerpt: string;
+    byline: string;
+    dir: string;
+    siteName: string;
+    lang: string;
+  },
+): string {
+  if (!article) {
+    return '# No article found';
+  }
+  return `
+  # ${article.title}
+  **Byline:** ${article.byline}
+  **Site:** ${article.siteName}
+  **Language:** ${article.lang}
+  ## Excerpt:
+  ${article.excerpt}
+  ---
+  ${article.textContent}
+  `;
+}

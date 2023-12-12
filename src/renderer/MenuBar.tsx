@@ -12,9 +12,10 @@ import Bookmarker from './Bookmarker';
 
 interface MenuBarProps {
   onGoClick: (url: string) => void;
+  onSaveAsArticleClick: () => void;
 }
 
-function MenuBar({ onGoClick }: MenuBarProps) {
+function MenuBar({ onGoClick, onSaveAsArticleClick }: MenuBarProps) {
   const [isBookmarkOpen, setIsBookmarkOpen] = useState(false);
   const [refreshIconSrc, setRefreshIconSrc] = useState(refreshIcon);
   const [centeredText, setCenteredText] = useState('');
@@ -49,7 +50,6 @@ function MenuBar({ onGoClick }: MenuBarProps) {
     setAdditionalDivs((prevDivs) => prevDivs.filter((_, i) => i !== index));
   };
 
-
   const handleGoBackClick = () => {
     window.history.back();
   };
@@ -60,13 +60,28 @@ function MenuBar({ onGoClick }: MenuBarProps) {
   return (
     <div className="MenuBar">
       <div style={{ display: 'flex', alignItems: 'left' }}>
-        <button style={{ width: 25, height: 25, padding: 0, fontSize: 18, fontWeight: "bold" }}
+        <button
+          style={{
+            width: 25,
+            height: 25,
+            padding: 0,
+            fontSize: 18,
+            fontWeight: 'bold',
+          }}
           onClick={handleGoBackClick}
         >
           <img src={arrowBack} style={{ width: '100%', height: '100%' }} />
         </button>
 
-        <button style={{ width: 25, height: 25, padding: 0, fontSize: 18, fontWeight: "bold", marginLeft: 10 }}
+        <button
+          style={{
+            width: 25,
+            height: 25,
+            padding: 0,
+            fontSize: 18,
+            fontWeight: 'bold',
+            marginLeft: 10,
+          }}
           onClick={handleGoForwardClick}
         >
           <img src={arrowForward} style={{ width: '100%', height: '100%' }} />
@@ -89,7 +104,14 @@ function MenuBar({ onGoClick }: MenuBarProps) {
           />
         </button>
 
-        <button style={{ width: 25, height: 25, padding: 0, fontSize: 18, marginLeft: 10, }}
+        <button
+          style={{
+            width: 25,
+            height: 25,
+            padding: 0,
+            fontSize: 18,
+            marginLeft: 10,
+          }}
           onClick={goHome}
         >
           <img src={home} style={{ width: '100%', height: '100%' }} />
@@ -167,7 +189,7 @@ function MenuBar({ onGoClick }: MenuBarProps) {
 
       {isBookmarkerOpen && (
         <div style={{ position: 'absolute', top: 0, right: 0, zIndex: 9999 }}>
-          <Bookmarker />
+          <Bookmarker handleSaveAsArticleClick={onSaveAsArticleClick} />
         </div>
       )}
 

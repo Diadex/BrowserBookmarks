@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 
-const Bookmarker = () => {
+interface BookmarkerProps {
+  handleSaveAsArticleClick: () => void;
+}
+
+const Bookmarker = ({handleSaveAsArticleClick}: BookmarkerProps) => {
   const [colorA, setColorA] = useState('white');
   const [colorB, setColorB] = useState('white');
   const [colorC, setColorC] = useState('white');
@@ -30,7 +34,7 @@ const Bookmarker = () => {
   return (
     <div style={{ background: 'white', display: 'flex', flexDirection: 'column', border: '1px solid black', padding: '10px', borderRadius: '5px' }}>
       <h1 style={{color:'black'}}>Bookmarker 4.0</h1>
-      <button style={{ backgroundColor: colorA }} onClick={handleClickA}>
+      <button style={{ backgroundColor: colorA }} onClick={handleSaveAsArticleClick}>
         Save as an Article
       </button>
       <button style={{ backgroundColor: colorB }} onClick={handleClickB}>

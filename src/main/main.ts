@@ -13,7 +13,10 @@ import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
-import { resolveHtmlPath } from './util';
+import { resolveHtmlPath, generateMarkdownFromArticle } from './util';
+import * as fs from 'fs';
+import { Readability } from '@mozilla/readability';
+import jsdom from 'jsdom';
 
 class AppUpdater {
   constructor() {
@@ -24,11 +27,40 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+const { JSDOM } = jsdom;
 
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
   console.log(msgTemplate(arg));
   event.reply('ipc-example', msgTemplate('pong'));
+});
+
+ipcMain.handle('process-readable', async (event, arg) => {
+  try {
+    const response = await fetch(
+      arg,
+    );
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok.');
+    }
+
+    const htmlString = await response.text();
+
+    const { window } = new JSDOM(htmlString);
+    const { document } = window;
+
+    const reader = new Readability(document).parse();
+    const mdText = generateMarkdownFromArticle(reader);
+
+    // Perform other operations as needed...
+
+    const filePath = path.join(app.getPath('documents'), 'test1.md');
+    fs.writeFileSync(filePath, mdText);
+  } catch (err) {
+    console.error(err);
+  }
+  return 'pong';
 });
 
 if (process.env.NODE_ENV === 'production') {
