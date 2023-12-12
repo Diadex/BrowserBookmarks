@@ -44,8 +44,7 @@ function Tab({ to, label, onRemove }: TabProps) {
   );
 }
 
-function Hello({ label }: { label: string }) {
-  const [urlText, setUrlText] = useState('https://www.bing.com');
+function Hello({ url, onGoClick }: { url: string; onGoClick: (url: string) => void }) {
   const [iframeWidth, setIframeWidth] = useState(window.innerWidth);
   const [iframeHeight, setIframeHeight] = useState(window.innerHeight - 40);
 
@@ -62,7 +61,7 @@ function Hello({ label }: { label: string }) {
   }, []);
 
   const handleGoClick = (url: string) => {
-    setUrlText(url);
+    onGoClick(url);
   };
 
   return (
@@ -81,7 +80,7 @@ function Hello({ label }: { label: string }) {
       <div className="Web">
         <iframe
           title="web"
-          src={urlText}
+          src={url}
           width={iframeWidth}
           height={iframeHeight}
           allowFullScreen
@@ -96,10 +95,19 @@ function generateRandomId() {
   return Math.random().toString(36).substring(7);
 }
 
-export default function App() {
+function App() {
   const [tabs, setTabs] = useState([
     { id: generateRandomId(), label: 'Tab 1', to: '/' },
   ]);
+  const [tabUrls, setTabUrls] = useState<{ [key: string]: string }>({
+    [tabs[0].id]: 'https://www.bing.com', // Initial URL for the first tab
+  });
+
+  const handleGoClick = (tabId: string, url: string) => {
+    // Update the URL for the specific tab
+    setTabUrls((prevUrls) => ({ ...prevUrls, [tabId]: url }));
+  };
+
   const addTab = () => {
     const newTab = {
       id: generateRandomId(),
@@ -108,30 +116,10 @@ export default function App() {
     };
     setTabs([...tabs, newTab]);
   };
+
   const removeTab = (id: string) => {
-    const indexToRemove = tabs.findIndex((tab) => tab.id === id);
-    let nextTabIndex;
-    if (indexToRemove > 0) {
-      // If the tab to be removed is not the first one,
-      // select the tab before it.
-      nextTabIndex = indexToRemove - 1;
-    } else if (indexToRemove === 0 && tabs.length > 1) {
-      // If the first tab is being closed and there are more tabs,
-      // select the tab after it.
-      nextTabIndex = 1;
-    } else {
-      // If the closing tab is the only one, or the last one is being closed,
-      // there won't be any tabs left to display.
-      nextTabIndex = null;
-    }
     const updatedTabs = tabs.filter((tab) => tab.id !== id);
     setTabs(updatedTabs);
-    if (nextTabIndex !== null) {
-      // Use the selected tab index to update the URL.
-      const nextTab = tabs[nextTabIndex];
-      // How do I switch to this path?
-      window.location.hash = `#${nextTab.to}`;
-    }
   };
 
   return (
@@ -150,12 +138,18 @@ export default function App() {
             />
           ))}
         </div>
+        {/* Conditionally render Hello component based on the route's path */}
         <Routes>
           {tabs.map((tab) => (
             <Route
               key={tab.id}
               path={tab.to}
-              element={<Hello label={tab.id} />}
+              element={
+                <Hello
+                  url={tabUrls[tab.id]}
+                  onGoClick={(url) => handleGoClick(tab.id, url)}
+                />
+              }
             />
           ))}
         </Routes>
@@ -163,3 +157,5 @@ export default function App() {
     </Router>
   );
 }
+
+export default App;
