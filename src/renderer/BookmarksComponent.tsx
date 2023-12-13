@@ -26,7 +26,7 @@ const BookmarksComponent = ({ bookmarks }: { bookmarks: any[] }) => {
   };
 
   return (
-    <div style={{ marginTop: 40 }}>
+    <div style={{ marginTop: 40, overflow: "auto", maxHeight: "80vh" }}>
       {bookmarks.map((bookmark) => (
         <div key={bookmark.id} className="bookmark" style={{ marginLeft: 20 }}>
           <h3>
@@ -54,7 +54,7 @@ const BookmarksComponent = ({ bookmarks }: { bookmarks: any[] }) => {
           )}
           {/* Display decrypted content if available */}
           {decryptedContent &&
-          bookmark.id === JSON.parse(decryptedContent).id ? (
+            bookmark.id === JSON.parse(decryptedContent).id ? (
             <div className="bookmark">
               <p>Type: {JSON.parse(decryptedContent).type}</p>
               <h4>Title: {JSON.parse(decryptedContent).title}</h4>
