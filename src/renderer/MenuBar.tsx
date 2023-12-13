@@ -9,6 +9,7 @@ import cancel from '../../assets/icons/cancel.svg'; // Path to your SVG file
 import { useState } from 'react';
 import addIcon from '../../assets/icons/add-icon.svg'; // Path to your SVG file
 import Bookmarker from './Bookmarker';
+import { on } from 'stream';
 
 interface MenuBarProps {
   id: string
@@ -19,6 +20,10 @@ interface MenuBarProps {
   onOpenBookmarksClick: () => void;
   addTab: (value: number) => void;
   tabId: string;
+  onRefreshClick: () => void;
+  onHomeClick: () => void;
+  onGoBackClick: () => void;
+  onGoForwardClick: () => void;
 }
 
 function MenuBar({
@@ -30,6 +35,10 @@ function MenuBar({
   onOpenBookmarksClick,
   addTab,
   tabId,
+  onRefreshClick,
+  onHomeClick,
+  onGoBackClick,
+  onGoForwardClick,
 }: MenuBarProps) {
   const [isBookmarkOpen, setIsBookmarkOpen] = useState(false);
   const [refreshIconSrc, setRefreshIconSrc] = useState(refreshIcon);
@@ -59,27 +68,6 @@ function MenuBar({
     setAdditionalDivs((prevDivs) => prevDivs.filter((_, i) => i !== index));
   };
 
-  const goHome = () => {
-    window.location.reload();
-  };
-
-  const handleGoBackClick = () => {
-    window.history.back();
-  };
-
-  const handleGoForwardClick = () => {
-    window.history.forward();
-  };
-
-  const handleRefreshClick = () => {
-    const iframe = document.getElementById(id) as HTMLIFrameElement | null; // Replace with your actual iframe ID
-    if (iframe) {
-      console.log('Refreshing...');
-      iframe.src = iframe.src; // This will reload the iframe content
-    }
-    else console.log('cant refresh');
-    console.log("iframe ", iframe);
-  };
 
   return (
     <div className="MenuBar">
@@ -92,7 +80,7 @@ function MenuBar({
             fontSize: 18,
             fontWeight: 'bold',
           }}
-          onClick={handleGoBackClick}
+          onClick={onGoBackClick}
         >
           <img src={arrowBack} style={{ width: '100%', height: '100%' }} />
         </button>
@@ -106,7 +94,7 @@ function MenuBar({
             fontWeight: 'bold',
             marginLeft: 10,
           }}
-          onClick={handleGoForwardClick}
+          onClick={onGoForwardClick}
         >
           <img src={arrowForward} style={{ width: '100%', height: '100%' }} />
         </button>
@@ -119,7 +107,7 @@ function MenuBar({
             fontSize: 18,
             marginLeft: 10,
           }}
-          onClick={handleRefreshClick}
+          onClick={onRefreshClick}
         >
           <img
             src={refreshIconSrc}
@@ -136,7 +124,7 @@ function MenuBar({
             fontSize: 18,
             marginLeft: 10,
           }}
-          onClick={goHome}
+          onClick={onHomeClick}
         >
           <img src={home} style={{ width: '100%', height: '100%' }} />
         </button>

@@ -61,6 +61,16 @@ function Hello({ id, url, onGoClick, addTab }: {id: string, url: string; onGoCli
     setBookmarks(bookmarks);
   };
 
+  const handleRefreshClick = () => {
+    const webview = document.querySelector('webview') as Electron.WebviewTag;
+    webview.reload();
+  }
+
+  const handleHomeClick = () => {
+    const webview = document.querySelector('webview') as Electron.WebviewTag;
+    webview.loadURL('https://www.google.com/');
+  }
+
   const handleOpenBookmarksClick = () => {
     getBookmarks();
     toggleBookmarks();
@@ -87,6 +97,16 @@ function Hello({ id, url, onGoClick, addTab }: {id: string, url: string; onGoCli
   const handleSaveAsArticleClick = async () => {
     await getSaveAsArticleClick();
   };
+
+  const handleGoBackClick = () => {
+    const webview = document.querySelector('webview') as Electron.WebviewTag;
+    webview.goBack();
+  }
+
+  const handleGoForwardClick = () => {
+    const webview = document.querySelector('webview') as Electron.WebviewTag;
+    webview.goForward();
+  }
 
   const toggleEncryption = () => {
     setIsEncryptionEnabled(!isEncryptionEnabled);
@@ -136,6 +156,10 @@ function Hello({ id, url, onGoClick, addTab }: {id: string, url: string; onGoCli
             onOpenBookmarksClick={handleOpenBookmarksClick}
             addTab={addTab}
             tabId={id}
+            onRefreshClick={handleRefreshClick}
+            onHomeClick={handleHomeClick}
+            onGoBackClick={handleGoBackClick}
+            onGoForwardClick={handleGoForwardClick}
           />
         {!showBookmarks && <div className="Web">
           <webview
