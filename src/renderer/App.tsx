@@ -57,6 +57,15 @@ function Hello({ id, url, onGoClick, addTab, handleGoClick }: {id: string, url: 
   const [showBookmarks, setShowBookmarks] = useState(false);
   const [bookmarks, setBookmarks] = useState([]);
 
+  const webview = document.querySelector('webview') as Electron.WebviewTag;
+  if (webview && webview.id == (id) ) {
+    webview.addEventListener('did-navigate', (event) => {
+      // This event fires when the webview has successfully navigated.
+      console.log('Did navigate to:', event.url);
+      handleGoClick( id, event.url)
+    });
+  }
+
   const getBookmarks = async () => {
     const bookmarks = await window.electron.ipcRenderer.invoke('get-bookmarks');
     setBookmarks(bookmarks);
@@ -124,6 +133,7 @@ function Hello({ id, url, onGoClick, addTab, handleGoClick }: {id: string, url: 
       console.log(result);
     });
   };
+
 
   async function getSaveAsArticleClick(): Promise<void> {
     const webview = document.querySelector('webview') as Electron.WebviewTag;
@@ -215,7 +225,7 @@ function App() {
     { id: generateRandomId(), label: 'Tab 1', to: '/' },
   ]);
   const [tabUrls, setTabUrls] = useState<{ [key: string]: string }>({
-    [tabs[0].id]: 'https://www.bing.com', // Initial URL for the first tab
+    [tabs[0].id]: 'https://www.google.com', // Initial URL for the first tab
   });
 
   const handleGoClick = (tabId: string, url: string) => {
@@ -259,7 +269,7 @@ function App() {
             <Tab
               key={tab.id}
               to={tab.to}
-              label={tab.label}
+              label={tabUrls[tab.id] || 'https://www.google.com'}
               onRemove={() => removeTab(tab.id)}
             />
           ))}
@@ -274,7 +284,7 @@ function App() {
                 <>
                   <Hello
                     id={tab.id}
-                    url={ tabUrls && tabUrls[tab.id]? tabUrls[tab.id] :'https://www.bing.com'}
+                    url={ tabUrls && tabUrls[tab.id]? tabUrls[tab.id] :'https://www.google.com'}
                     onGoClick={(url) => handleGoClick(tab.id, url)}
                     addTab={addTab}
                     handleGoClick={handleGoClick}
