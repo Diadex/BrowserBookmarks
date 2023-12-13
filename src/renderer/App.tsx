@@ -143,6 +143,7 @@ function Hello({ id, url, onGoClick, addTab }: {id: string, url: string; onGoCli
           width: '100%',
           paddingLeft: 0,
           marginLeft: -10,
+          paddingTop: 89,
           display: 'flex',
           justifyContent: 'flex-start',
         }}
