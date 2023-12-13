@@ -15,9 +15,16 @@ interface MenuBarProps {
   onGoClick: (url: string) => void;
   addTab: (value: number) => void;
   tabId: string;
+  onSaveAsArticleClick: () => void;
+  onToggleEncryptionClick: () => void;
+  onSaveURLClick: () => void;
 }
 
-function MenuBar({id, onGoClick, addTab, tabId }: MenuBarProps) {
+function MenuBar({ onGoClick, onSaveAsArticleClick, onToggleEncryptionClick, onSaveURLClick, id, onGoClick, addTab, tabId }: MenuBarProps) {
+  
+}
+
+function MenuBar({ }: MenuBarProps) {
   const [isBookmarkOpen, setIsBookmarkOpen] = useState(false);
   const [refreshIconSrc, setRefreshIconSrc] = useState(refreshIcon);
   const [centeredText, setCenteredText] = useState('');
@@ -45,11 +52,9 @@ function MenuBar({id, onGoClick, addTab, tabId }: MenuBarProps) {
     console.log(`Cancel button clicked for tab with ID: ${tabId}`);
     setAdditionalDivs((prevDivs) => prevDivs.filter((_, i) => i !== index));
   };
-
   const goHome = () => {
     window.location.reload();
   };
-
   const handleGoBackClick = () => {
     window.history.back();
   };
@@ -71,13 +76,28 @@ function MenuBar({id, onGoClick, addTab, tabId }: MenuBarProps) {
   return (
     <div className="MenuBar">
       <div style={{ display: 'flex', alignItems: 'left' }}>
-        <button style={{ width: 25, height: 25, padding: 0, fontSize: 18, fontWeight: "bold" }}
+        <button
+          style={{
+            width: 25,
+            height: 25,
+            padding: 0,
+            fontSize: 18,
+            fontWeight: 'bold',
+          }}
           onClick={handleGoBackClick}
         >
           <img src={arrowBack} style={{ width: '100%', height: '100%' }} />
         </button>
 
-        <button style={{ width: 25, height: 25, padding: 0, fontSize: 18, fontWeight: "bold", marginLeft: 10 }}
+        <button
+          style={{
+            width: 25,
+            height: 25,
+            padding: 0,
+            fontSize: 18,
+            fontWeight: 'bold',
+            marginLeft: 10,
+          }}
           onClick={handleGoForwardClick}
         >
           <img src={arrowForward} style={{ width: '100%', height: '100%' }} />
@@ -100,7 +120,14 @@ function MenuBar({id, onGoClick, addTab, tabId }: MenuBarProps) {
           />
         </button>
 
-        <button style={{ width: 25, height: 25, padding: 0, fontSize: 18, marginLeft: 10, }}
+        <button
+          style={{
+            width: 25,
+            height: 25,
+            padding: 0,
+            fontSize: 18,
+            marginLeft: 10,
+          }}
           onClick={goHome}
         >
           <img src={home} style={{ width: '100%', height: '100%' }} />
@@ -178,7 +205,12 @@ function MenuBar({id, onGoClick, addTab, tabId }: MenuBarProps) {
 
       {isBookmarkerOpen && (
         <div style={{ position: 'absolute', top: 0, right: 0, zIndex: 9999 }}>
-          <Bookmarker addTab={addTab} />
+          <Bookmarker
+            handleSaveAsArticleClick={onSaveAsArticleClick}
+            onToggleEncryptionClick={onToggleEncryptionClick}
+            onSaveURLClick={onSaveURLClick}
+            addTab={addTab}
+          />
         </div>
       )}
 
