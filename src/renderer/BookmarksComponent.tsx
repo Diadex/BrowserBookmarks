@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import deleteIcon from '../../assets/icons/delete.svg'; // Path to your SVG file
 
 const BookmarksComponent = ({ bookmarks }: { bookmarks: any[] }) => {
   const [decryptedContent, setDecryptedContent] = useState(null);
@@ -17,6 +18,10 @@ const BookmarksComponent = ({ bookmarks }: { bookmarks: any[] }) => {
     }
   };
 
+  const handleDeleteClick = async (bookmarkId: number) => {
+    await window.electron.ipcRenderer.invoke('delete-bookmark', bookmarkId);
+  }
+
   const handleDecryptClick = async (bookmarkId: number) => {
     await decryptBookmark(bookmarkId);
   };
@@ -26,7 +31,7 @@ const BookmarksComponent = ({ bookmarks }: { bookmarks: any[] }) => {
   };
 
   return (
-    <div style={{ marginTop: 40 }}>
+    <div style={{ marginTop: 40, overflow: "auto", maxHeight: "80vh" }}>
       {bookmarks.map((bookmark) => (
         <div key={bookmark.id} className="bookmark" style={{ marginLeft: 20 }}>
           <h3>
@@ -44,7 +49,7 @@ const BookmarksComponent = ({ bookmarks }: { bookmarks: any[] }) => {
           {bookmark.type !== 'encrypted' && bookmark.type !== 'article' && (
             <div>
               <h4>Content:</h4>
-              <pre>{JSON.stringify(bookmark.content, null, 2)}</pre>
+              {/* <pre>{JSON.stringify(bookmark.content, null, 2)}</pre> */}
             </div>
           )}
           {bookmark.type === 'url' && (
@@ -54,7 +59,7 @@ const BookmarksComponent = ({ bookmarks }: { bookmarks: any[] }) => {
           )}
           {/* Display decrypted content if available */}
           {decryptedContent &&
-          bookmark.id === JSON.parse(decryptedContent).id ? (
+            bookmark.id === JSON.parse(decryptedContent).id ? (
             <div className="bookmark">
               <p>Type: {JSON.parse(decryptedContent).type}</p>
               <h4>Title: {JSON.parse(decryptedContent).title}</h4>
@@ -72,6 +77,13 @@ const BookmarksComponent = ({ bookmarks }: { bookmarks: any[] }) => {
               )}
             </div>
           ) : null}
+          <div style={{ marginTop: 10 }}>
+            <button style={{ backgroundColor: "#F65454" ,display:'flex',}}>
+                  Delete
+                  <img src={deleteIcon} style={{ width: '100%', height: '100%' }} onClick={() => handleDeleteClick(bookmark.id)} />
+            </button>
+
+          </div>
         </div>
       ))}
     </div>
