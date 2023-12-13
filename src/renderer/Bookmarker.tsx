@@ -6,7 +6,7 @@ interface BookmarkerProps {
   onToggleEncryptionClick: () => void;
   onSaveURLClick: () => void;
   onOpenBookmarksClick: () => void;
-  addTab: (value:number) => void;
+  addTab: (value: number) => void;
 }
 
 const Bookmarker = ({
@@ -21,6 +21,7 @@ const Bookmarker = ({
   const [colorE, setColorE] = useState('white');
   const [isEncryptionEnabled, setIsEncryptionEnabled] = useState(false);
   const [isBookmarkerOpen, setIsBookmarkerOpen] = useState('Open Bookmarks');
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const toggleText = () => {
     setIsBookmarkerOpen(isBookmarkerOpen === 'Open Bookmarks' ? 'Close Bookmarks' : 'Open Bookmarks');
@@ -29,6 +30,8 @@ const Bookmarker = ({
   const handleOpenBokmarksClick = () => {
     toggleText();
     onOpenBookmarksClick();
+    setIsDisabled(!isDisabled);
+
   }
 
   const handleClickC = () => {
@@ -56,10 +59,13 @@ const Bookmarker = ({
       <button
         style={{ backgroundColor: colorA }}
         onClick={handleSaveAsArticleClick}
+        disabled={isDisabled}
       >
         Save as an Article
       </button>
-      <button style={{ backgroundColor: colorC }} onClick={onSaveURLClick}>
+      <button style={{ backgroundColor: colorC }} onClick={onSaveURLClick}
+        disabled={isDisabled}
+      >
         Save Link
       </button>
       <div style={{ display: 'flex', alignItems: 'center', margin: '10px 0' }}>
@@ -68,7 +74,7 @@ const Bookmarker = ({
           <input type="checkbox" onChange={onToggleEncryptionClick} />
           <span
             className="slider round"
-            style={{ background: isEncryptionEnabled ? 'blue' : 'gray' }}
+            style={{ width: isEncryptionEnabled ? 'blue' : 'gray' }}
           ></span>
         </label>
         <span style={{ marginLeft: '10px', color: 'black' }}>
