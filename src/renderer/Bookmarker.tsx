@@ -6,6 +6,7 @@ interface BookmarkerProps {
   onToggleEncryptionClick: () => void;
   onSaveURLClick: () => void;
   onOpenBookmarksClick: () => void;
+  addTab: (value:number) => void;
 }
 
 const Bookmarker = ({
@@ -13,6 +14,7 @@ const Bookmarker = ({
   onToggleEncryptionClick,
   onSaveURLClick,
   onOpenBookmarksClick,
+  addTab,
 }: BookmarkerProps) => {
   const [colorA, setColorA] = useState('white');
   const [colorC, setColorC] = useState('white');
@@ -35,6 +37,8 @@ const Bookmarker = ({
 
   const handleClickE = () => {
     setColorE(colorE === 'white' ? 'blue' : 'white');
+    // add tab'dan ekle
+    addTab(1)
   };
 
   return (
