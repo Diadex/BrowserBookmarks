@@ -29,6 +29,7 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+let childWindow: BrowserWindow | null = null;
 const { JSDOM } = jsdom;
 
 ipcMain.on('ipc-example', async (event, arg) => {
@@ -50,6 +51,114 @@ ipcMain.handle('get-bookmarks', async (event, arg) => {
     ),
   ).bookmarks;
   return bookmarks;
+});
+
+ipcMain.handle('open-article', async (event, arg) => {
+  const bookmarks = JSON.parse(
+    fs.readFileSync(
+      path.join(
+        app.getPath('documents'),
+        'BrowserBook',
+        'Bookmarks',
+        'bookmarks.json',
+      ),
+      'utf8',
+    ),
+  ).bookmarks;
+  console.log(arg);
+  fs.writeFileSync(
+    path.join(
+      app.getPath('documents'),
+      'BrowserBook',
+      'Bookmarks',
+      arg.title + '.html',
+    ),
+    arg.content,
+  );
+  const filePath = path.join(
+    app.getPath('documents'),
+    'BrowserBook',
+    'Bookmarks',
+    arg.title + '.html',
+  );
+
+  childWindow = new BrowserWindow({
+    show: false,
+    width: 1024,
+    height: 728,
+    parent: mainWindow,
+    webPreferences: {
+      webviewTag: true,
+      preload: app.isPackaged
+        ? path.join(__dirname, 'preload.js')
+        : path.join(__dirname, '../../.erb/dll/preload.js'),
+    },
+
+    modal: true,
+    title: arg.title,
+  });
+
+  childWindow?.loadURL(filePath);
+  childWindow?.on('ready-to-show', () => {
+    if (!childWindow) {
+      throw new Error('"childWindow" is not defined');
+    }
+    if (process.env.START_MINIMIZED) {
+      childWindow.minimize();
+    } else {
+      childWindow.show();
+    }
+  });
+
+  childWindow?.on('closed', () => {
+    childWindow = null;
+    fs.unlinkSync(filePath);
+  });
+});
+
+ipcMain.handle('decrypt-bookmark', async (event, arg) => {
+  try {
+    const id = arg;
+    const bookmarks = JSON.parse(
+      fs.readFileSync(
+        path.join(
+          app.getPath('documents'),
+          'BrowserBook',
+          'Bookmarks',
+          'bookmarks.json',
+        ),
+        'utf8',
+      ),
+    ).bookmarks;
+    const bookmark = bookmarks.find((bookmark: any) => bookmark.id === id);
+    const decryptedContent = await new Promise((resolve, reject) => {
+      prompt({
+        title: 'Enter Password',
+        label: 'Enter the password for this bookmark to decrypt it',
+        value: 'pass123',
+        type: 'input',
+      })
+        .then((r: string | null) => {
+          if (r === null) {
+            console.log('user cancelled');
+            reject(new Error('User cancelled decryption'));
+          } else {
+            console.log(r);
+            const key = new jfe.encryptor(r);
+            const decryptedBookmark = key.decrypt(bookmark.content);
+            console.log(decryptedBookmark);
+            resolve(decryptedBookmark);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          reject(error);
+        });
+    });
+    return decryptedContent;
+  } catch (error) {
+    console.error(error);
+  }
 });
 
 ipcMain.handle('save-url', async (event, arg) => {
@@ -233,13 +342,13 @@ ipcMain.handle('save-readable', async (event, arg) => {
         '<head><link rel="stylesheet" type="text/css" href="styles.css"></head>' +
         reader.content;
 
-      const filePath = path.join(
-        app.getPath('documents'),
-        'BrowserBook',
-        'Bookmarks',
-        reader.title + '.html',
-      );
-      fs.writeFileSync(filePath, reader.content);
+      // const filePath = path.join(
+      //   app.getPath('documents'),
+      //   'BrowserBook',
+      //   'Bookmarks',
+      //   reader.title + '.html',
+      // );
+      // fs.writeFileSync(filePath, reader.content);
 
       if (encryption) {
         prompt({
@@ -272,7 +381,7 @@ ipcMain.handle('save-readable', async (event, arg) => {
                       id: jsonData.nextId,
                       type: 'article',
                       title: reader.title,
-                      content: null,
+                      content: reader.content,
                       url: url,
                     };
                     const key = new jfe.encryptor(r);
@@ -283,6 +392,7 @@ ipcMain.handle('save-readable', async (event, arg) => {
                     const newBookmarkEntry = {
                       id: jsonData.nextId,
                       type: 'encrypted',
+                      title: reader.title,
                       content: encryptedBookmark,
                     };
 
