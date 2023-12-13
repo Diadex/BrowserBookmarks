@@ -15,9 +15,16 @@ interface MenuBarProps {
   onSaveAsArticleClick: () => void;
   onToggleEncryptionClick: () => void;
   onSaveURLClick: () => void;
+  onOpenBookmarksClick: () => void;
 }
 
-function MenuBar({ onGoClick, onSaveAsArticleClick, onToggleEncryptionClick, onSaveURLClick }: MenuBarProps) {
+function MenuBar({
+  onGoClick,
+  onSaveAsArticleClick,
+  onToggleEncryptionClick,
+  onSaveURLClick,
+  onOpenBookmarksClick,
+}: MenuBarProps) {
   const [isBookmarkOpen, setIsBookmarkOpen] = useState(false);
   const [refreshIconSrc, setRefreshIconSrc] = useState(refreshIcon);
   const [centeredText, setCenteredText] = useState('');
@@ -195,6 +202,7 @@ function MenuBar({ onGoClick, onSaveAsArticleClick, onToggleEncryptionClick, onS
             handleSaveAsArticleClick={onSaveAsArticleClick}
             onToggleEncryptionClick={onToggleEncryptionClick}
             onSaveURLClick={onSaveURLClick}
+            onOpenBookmarksClick={onOpenBookmarksClick}
           />
         </div>
       )}

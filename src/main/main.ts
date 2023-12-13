@@ -9,7 +9,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
+import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -37,6 +37,21 @@ ipcMain.on('ipc-example', async (event, arg) => {
   event.reply('ipc-example', msgTemplate('pong'));
 });
 
+ipcMain.handle('get-bookmarks', async (event, arg) => {
+  const bookmarks = JSON.parse(
+    fs.readFileSync(
+      path.join(
+        app.getPath('documents'),
+        'BrowserBook',
+        'Bookmarks',
+        'bookmarks.json',
+      ),
+      'utf8',
+    ),
+  ).bookmarks;
+  return bookmarks;
+});
+
 ipcMain.handle('save-url', async (event, arg) => {
   const { encryption, url } = arg;
 
@@ -47,7 +62,7 @@ ipcMain.handle('save-url', async (event, arg) => {
       value: 'pass123',
       type: 'input',
     })
-      .then((r: string) => {
+      .then((r: string | null) => {
         if (r === null) {
           console.log('user cancelled');
         } else {
@@ -233,7 +248,7 @@ ipcMain.handle('save-readable', async (event, arg) => {
           value: 'pass123',
           type: 'input',
         })
-          .then((r: string) => {
+          .then((r: string | null) => {
             if (r === null) {
               console.log('user cancelled');
             } else {
