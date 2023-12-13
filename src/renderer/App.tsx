@@ -45,7 +45,8 @@ function Tab({ to, label, onRemove }: TabProps) {
   );
 }
 
-function Hello({ id, url, onGoClick }: {id: string, url: string; onGoClick: (url: string) => void }) {
+function Hello({ id, url, onGoClick, addTab }: {id: string, url: string; onGoClick: (url: string) => void
+  addTab: (value: number) => void;}) {
   const [iframeWidth, setIframeWidth] = useState(window.innerWidth);
   const [iframeHeight, setIframeHeight] = useState(window.innerHeight - 40);
 
@@ -127,11 +128,14 @@ function Hello({ id, url, onGoClick }: {id: string, url: string; onGoClick: (url
         }}
       >
         <MenuBar
+            id={id}
             onGoClick={handleGoClick}
             onSaveAsArticleClick={handleSaveAsArticleClick}
             onToggleEncryptionClick={toggleEncryption}
             onSaveURLClick={handleSaveURLClick}
             onOpenBookmarksClick={handleOpenBookmarksClick}
+            addTab={addTab}
+            tabId={id}
           />
         {!showBookmarks && <div className="Web">
           <webview
@@ -241,16 +245,11 @@ function App() {
               path={tab.to}
               element={
                 <>
-                  <MenuBar
-                    id= {tab.id}
-                    onGoClick={(url) => handleGoClick(tab.id, url)}
-                    tabId={tab.id} // Pass tabId to MenuBar
-                    addTab={addTab}
-                  />
                   <Hello
                     id={tab.id}
                     url={ tabUrls && tabUrls[tab.id]? tabUrls[tab.id] :'https://www.bing.com'}
                     onGoClick={(url) => handleGoClick(tab.id, url)}
+                    addTab={addTab}
                   />
                 </>
               }
@@ -261,5 +260,10 @@ function App() {
     </Router>
   );
 }
-
+/*                <MenuBar
+                    id= {tab.id}
+                    onGoClick={(url) => handleGoClick(tab.id, url)}
+                    tabId={tab.id} // Pass tabId to MenuBar
+                    addTab={addTab}
+                  /> */
 export default App;
