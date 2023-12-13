@@ -18,6 +18,10 @@ const BookmarksComponent = ({ bookmarks }: { bookmarks: any[] }) => {
     }
   };
 
+  const handleDeleteClick = async (bookmarkId: number) => {
+    await window.electron.ipcRenderer.invoke('delete-bookmark', bookmarkId);
+  }
+
   const handleDecryptClick = async (bookmarkId: number) => {
     await decryptBookmark(bookmarkId);
   };
@@ -74,9 +78,9 @@ const BookmarksComponent = ({ bookmarks }: { bookmarks: any[] }) => {
             </div>
           ) : null}
           <div style={{ marginTop: 10 }}>
-            <button style={{ backgroundColor: "#F65454" ,display:'flex',}}>    
-                  Delete 
-                  <img src={deleteIcon} style={{ width: '100%', height: '100%' }} />
+            <button style={{ backgroundColor: "#F65454" ,display:'flex',}}>
+                  Delete
+                  <img src={deleteIcon} style={{ width: '100%', height: '100%' }} onClick={() => handleDeleteClick(bookmark.id)} />
             </button>
 
           </div>

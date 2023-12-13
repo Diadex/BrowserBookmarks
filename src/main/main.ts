@@ -38,6 +38,42 @@ ipcMain.on('ipc-example', async (event, arg) => {
   event.reply('ipc-example', msgTemplate('pong'));
 });
 
+ipcMain.handle('delete-bookmark', async (event, arg) => {
+  const bookmarks = JSON.parse(
+    fs.readFileSync(
+      path.join(
+        app.getPath('documents'),
+        'BrowserBook',
+        'Bookmarks',
+        'bookmarks.json',
+      ),
+      'utf8',
+    ),
+  ).bookmarks;
+  bookmarks.splice(
+    bookmarks.findIndex((bookmark: any) => bookmark.id === arg),
+    1,
+  );
+  fs.writeFileSync(
+    path.join(
+      app.getPath('documents'),
+      'BrowserBook',
+      'Bookmarks',
+      'bookmarks.json',
+    ),
+    JSON.stringify(
+      {
+        count: bookmarks.length,
+        nextId: bookmarks.length + 1,
+        bookmarks: bookmarks,
+      },
+      null,
+      2,
+    ),
+  );
+  return bookmarks;
+});
+
 ipcMain.handle('get-bookmarks', async (event, arg) => {
   const bookmarks = JSON.parse(
     fs.readFileSync(
