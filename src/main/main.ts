@@ -598,6 +598,44 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(() => {
+    if (
+      !fs.existsSync(
+        path.join(
+          app.getPath('documents'),
+          'BrowserBook',
+          'Bookmarks',
+          'bookmarks.json',
+        ),
+      )
+    ) {
+      if (!fs.existsSync(path.join(app.getPath('documents'), 'BrowserBook')))
+        fs.mkdirSync(path.join(app.getPath('documents'), 'BrowserBook'));
+      if (
+        !fs.existsSync(
+          path.join(app.getPath('documents'), 'BrowserBook', 'Bookmarks'),
+        )
+      )
+        fs.mkdirSync(
+          path.join(app.getPath('documents'), 'BrowserBook', 'Bookmarks'),
+        );
+      fs.writeFileSync(
+        path.join(
+          app.getPath('documents'),
+          'BrowserBook',
+          'Bookmarks',
+          'bookmarks.json',
+        ),
+        JSON.stringify(
+          {
+            count: 0,
+            nextId: 1,
+            bookmarks: [],
+          },
+          null,
+          2,
+        ),
+      );
+    }
     createWindow();
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
