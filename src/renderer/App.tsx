@@ -45,7 +45,8 @@ function Tab({ to, label, onRemove }: TabProps) {
   );
 }
 
-function Hello({ id, url, onGoClick, addTab }: {id: string, url: string; onGoClick: (url: string) => void
+function Hello({ id, url, onGoClick, addTab, handleGoClick }: {id: string, url: string; onGoClick: (url: string) => void;
+  handleGoClick: (tabId: string, url: string) => void;
   addTab: (value: number) => void;}) {
   const [iframeWidth, setIframeWidth] = useState(window.innerWidth);
   const [iframeHeight, setIframeHeight] = useState(window.innerHeight - 40);
@@ -89,7 +90,8 @@ function Hello({ id, url, onGoClick, addTab }: {id: string, url: string; onGoCli
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleGoClick = (url: string) => {
+
+  const handleGoClick2 = (url: string) => {
     const webview = document.querySelector('webview') as Electron.WebviewTag;
     webview.loadURL(url);
   };
@@ -149,8 +151,8 @@ function Hello({ id, url, onGoClick, addTab }: {id: string, url: string; onGoCli
         }}
       >
         <MenuBar
-            id={id}
-            onGoClick={handleGoClick}
+            id={id+url}
+            onGoClick={onGoClick}
             onSaveAsArticleClick={handleSaveAsArticleClick}
             onToggleEncryptionClick={toggleEncryption}
             onSaveURLClick={handleSaveURLClick}
@@ -164,8 +166,8 @@ function Hello({ id, url, onGoClick, addTab }: {id: string, url: string; onGoCli
           />
         {!showBookmarks && <div className="Web">
           <webview
-            id="foo"
-            src="https://www.google.com/"
+            id={id + url}
+            src={url}
             style={{
               display: 'inline-flex',
               width: webviewWidth,
@@ -275,6 +277,7 @@ function App() {
                     url={ tabUrls && tabUrls[tab.id]? tabUrls[tab.id] :'https://www.bing.com'}
                     onGoClick={(url) => handleGoClick(tab.id, url)}
                     addTab={addTab}
+                    handleGoClick={handleGoClick}
                   />
                 </>
               }
