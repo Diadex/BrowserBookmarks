@@ -72,6 +72,10 @@ const BookmarksComponent = ({ bookmarks }: { bookmarks: any[] }) => {
               )}
             </div>
           ) : null}
+          <div style={{marginTop:10}}>
+            <button style={{backgroundColor:"#F65454"}}>Delete</button>
+
+          </div>
         </div>
       ))}
     </div>
