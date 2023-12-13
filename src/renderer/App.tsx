@@ -2,47 +2,59 @@ import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import './App.css';
 import MenuBar from './MenuBar';
-import * as fs from 'fs';
-import { Readability } from '@mozilla/readability';
 
 function Hello() {
-  const [urlText, setUrlText] = useState('https://www.bing.com');
-  const [iframeWidth, setIframeWidth] = useState(window.innerWidth);
-  const [iframeHeight, setIframeHeight] = useState(window.innerHeight - 40);
+  const [webviewWidth, setWebviewWidth] = useState(window.innerWidth);
+  const [webviewHeight, setWebviewHeight] = useState(window.innerHeight);
+  const [isEncryptionEnabled, setIsEncryptionEnabled] = useState(false);
 
   const handleResize = () => {
-    setIframeWidth(window.innerWidth);
-    setIframeHeight(window.innerHeight - 40);
+    setWebviewWidth(window.innerWidth);
+    setWebviewHeight(window.innerHeight - 40);
   };
 
   useEffect(() => {
     window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const handleGoClick = (url: string) => {
-    setUrlText(url);
+    const webview = document.querySelector('webview') as Electron.WebviewTag;
+    webview.loadURL(url);
   };
 
   const handleSaveAsArticleClick = async () => {
-    await fetchHTML();
+    await getSaveAsArticleClick();
   };
 
-  async function fetchHTML(): Promise<void> {
-    const iframe = document.getElementById(
-      'web-loader',
-    ) as HTMLIFrameElement | null;
-    if (iframe) {
-      const address = iframe.src;
-      console.log(address);
-      window.electron.ipcRenderer
-        .invoke('process-readable', address)
-        .then((result) => {
-          console.log(result);
-        });
+  const toggleEncryption = () => {
+    setIsEncryptionEnabled(!isEncryptionEnabled);
+  }
+
+  const handleSaveURLClick = async () =>{
+    const webview = document.querySelector('webview') as Electron.WebviewTag;
+    const args = {
+      encryption: isEncryptionEnabled,
+      url: webview.getURL(),
     }
+    window.electron.ipcRenderer
+      .invoke('save-url', args)
+      .then((result) => {
+        console.log(result);
+      });
+  }
+
+  async function getSaveAsArticleClick(): Promise<void> {
+    const webview = document.querySelector('webview') as Electron.WebviewTag;
+    const args = {
+      encryption: isEncryptionEnabled,
+      url: webview.getURL(),
+    }
+    window.electron.ipcRenderer
+      .invoke('save-readable', args)
+      .then((result) => {
+        console.log(result);
+      });
   }
 
   return (
@@ -56,15 +68,23 @@ function Hello() {
           justifyContent: 'flex-start',
         }}
       >
-        <MenuBar onGoClick={handleGoClick} onSaveAsArticleClick={handleSaveAsArticleClick} />
+        <MenuBar
+          onGoClick={handleGoClick}
+          onSaveAsArticleClick={handleSaveAsArticleClick}
+          onToggleEncryptionClick={toggleEncryption}
+          onSaveURLClick={handleSaveURLClick}
+        />
         <div className="Web">
-          <iframe
-            id="web-loader"
-            src={urlText}
-            width={iframeWidth}
-            height={iframeHeight}
-            allowFullScreen
-          ></iframe>
+          <webview
+            id="foo"
+            src="https://www.google.com/"
+            style={{
+              display: 'inline-flex',
+              width: webviewWidth,
+              height: webviewHeight,
+              margin: 0
+            }}
+          ></webview>
         </div>
       </div>
     </div>

@@ -9,14 +9,16 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
-import { resolveHtmlPath, generateMarkdownFromArticle } from './util';
+import { resolveHtmlPath } from './util';
 import * as fs from 'fs';
 import { Readability } from '@mozilla/readability';
 import jsdom from 'jsdom';
+import prompt from 'electron-prompt';
+import jfe from 'json-file-encrypt';
 
 class AppUpdater {
   constructor() {
@@ -35,11 +37,156 @@ ipcMain.on('ipc-example', async (event, arg) => {
   event.reply('ipc-example', msgTemplate('pong'));
 });
 
-ipcMain.handle('process-readable', async (event, arg) => {
-  try {
-    const response = await fetch(
-      arg,
+ipcMain.handle('save-url', async (event, arg) => {
+  const { encryption, url } = arg;
+
+  if (encryption) {
+    prompt({
+      title: 'Enter Password',
+      label: 'Create a password for this bookmark',
+      value: 'pass123',
+      type: 'input',
+    })
+      .then((r: string) => {
+        if (r === null) {
+          console.log('user cancelled');
+        } else {
+          fs.readFile(
+            path.join(
+              app.getPath('documents'),
+              'BrowserBook',
+              'Bookmarks',
+              'bookmarks.json',
+            ),
+            'utf8',
+            (err, data) => {
+              if (err) {
+                console.error(err);
+                return;
+              }
+              try {
+                const jsonData = JSON.parse(data);
+                // Create new bookmark data
+                const newBookmark = {
+                  id: jsonData.nextId,
+                  type: 'url',
+                  title: 'test',
+                  content: null,
+                  url: url,
+                };
+                const key = new jfe.encryptor(r);
+                const encryptedBookmark = key.encrypt(
+                  JSON.stringify(newBookmark),
+                );
+
+                const newBookmarkEntry = {
+                  id: jsonData.nextId,
+                  type: 'encrypted',
+                  content: encryptedBookmark,
+                };
+
+                // Increment count and nextId
+                jsonData.count++;
+                jsonData.nextId++;
+
+                // Add the new bookmark to bookmarks array
+                jsonData.bookmarks.push(newBookmarkEntry);
+
+                // Convert object back to JSON
+                const updatedJsonData = JSON.stringify(jsonData, null, 2);
+
+                // Write the updated JSON back to the file
+                fs.writeFile(
+                  path.join(
+                    app.getPath('documents'),
+                    'BrowserBook',
+                    'Bookmarks',
+                    'bookmarks.json',
+                  ),
+                  updatedJsonData,
+                  'utf8',
+                  (err) => {
+                    if (err) {
+                      console.error(err);
+                      return;
+                    }
+                    console.log('Data added successfully!');
+                  },
+                );
+              } catch (err) {
+                console.error(err);
+              }
+            },
+          );
+        }
+      })
+      .catch(console.error);
+  } else {
+    fs.readFile(
+      path.join(
+        app.getPath('documents'),
+        'BrowserBook',
+        'Bookmarks',
+        'bookmarks.json',
+      ),
+      'utf8',
+      (err, data) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        try {
+          const jsonData = JSON.parse(data);
+
+          // Create new bookmark data
+          const newBookmark = {
+            id: jsonData.nextId,
+            type: 'url',
+            title: 'test',
+            content: null,
+            url: url,
+          };
+
+          // Increment count and nextId
+          jsonData.count++;
+          jsonData.nextId++;
+
+          // Add the new bookmark to bookmarks array
+          jsonData.bookmarks.push(newBookmark);
+
+          // Convert object back to JSON
+          const updatedJsonData = JSON.stringify(jsonData, null, 2);
+
+          // Write the updated JSON back to the file
+          fs.writeFile(
+            path.join(
+              app.getPath('documents'),
+              'BrowserBook',
+              'Bookmarks',
+              'bookmarks.json',
+            ),
+            updatedJsonData,
+            'utf8',
+            (err) => {
+              if (err) {
+                console.error(err);
+                return;
+              }
+              console.log('Data added successfully!');
+            },
+          );
+        } catch (err) {
+          console.error(err);
+        }
+      },
     );
+  }
+});
+
+ipcMain.handle('save-readable', async (event, arg) => {
+  const { encryption, url } = arg;
+  try {
+    const response = await fetch(url);
 
     if (!response.ok) {
       throw new Error('Network response was not ok.');
@@ -51,12 +198,178 @@ ipcMain.handle('process-readable', async (event, arg) => {
     const { document } = window;
 
     const reader = new Readability(document).parse();
-    const mdText = generateMarkdownFromArticle(reader);
 
     // Perform other operations as needed...
+    // const tempDiv = document.createElement('div');
+    // tempDiv.innerHTML = reader.content;
 
-    const filePath = path.join(app.getPath('documents'), 'test1.md');
-    fs.writeFileSync(filePath, mdText);
+    // // const anchors = tempDiv.querySelectorAll('a');
+
+    // // anchors.forEach((anchor) => {
+    // //   const href = anchor.getAttribute('href');
+    // //   if (href && isRelativePath(href)) {
+    // //     anchor.setAttribute('href', extractRootDomain(arg) + href);
+    // //   }
+    // // });
+
+    // reader.content = tempDiv.innerHTML;
+    if (reader) {
+      reader.content =
+        '<head><link rel="stylesheet" type="text/css" href="styles.css"></head>' +
+        reader.content;
+
+      const filePath = path.join(
+        app.getPath('documents'),
+        'BrowserBook',
+        'Bookmarks',
+        reader.title + '.html',
+      );
+      fs.writeFileSync(filePath, reader.content);
+
+      if (encryption) {
+        prompt({
+          title: 'Enter Password',
+          label: 'Create a password for this bookmark',
+          value: 'pass123',
+          type: 'input',
+        })
+          .then((r: string) => {
+            if (r === null) {
+              console.log('user cancelled');
+            } else {
+              fs.readFile(
+                path.join(
+                  app.getPath('documents'),
+                  'BrowserBook',
+                  'Bookmarks',
+                  'bookmarks.json',
+                ),
+                'utf8',
+                (err, data) => {
+                  if (err) {
+                    console.error(err);
+                    return;
+                  }
+                  try {
+                    const jsonData = JSON.parse(data);
+                    // Create new bookmark data
+                    const newBookmark = {
+                      id: jsonData.nextId,
+                      type: 'article',
+                      title: reader.title,
+                      content: null,
+                      url: url,
+                    };
+                    const key = new jfe.encryptor(r);
+                    const encryptedBookmark = key.encrypt(
+                      JSON.stringify(newBookmark),
+                    );
+
+                    const newBookmarkEntry = {
+                      id: jsonData.nextId,
+                      type: 'encrypted',
+                      content: encryptedBookmark,
+                    };
+
+                    // Increment count and nextId
+                    jsonData.count++;
+                    jsonData.nextId++;
+
+                    // Add the new bookmark to bookmarks array
+                    jsonData.bookmarks.push(newBookmarkEntry);
+
+                    // Convert object back to JSON
+                    const updatedJsonData = JSON.stringify(jsonData, null, 2);
+
+                    // Write the updated JSON back to the file
+                    fs.writeFile(
+                      path.join(
+                        app.getPath('documents'),
+                        'BrowserBook',
+                        'Bookmarks',
+                        'bookmarks.json',
+                      ),
+                      updatedJsonData,
+                      'utf8',
+                      (err) => {
+                        if (err) {
+                          console.error(err);
+                          return;
+                        }
+                        console.log('Data added successfully!');
+                      },
+                    );
+                  } catch (err) {
+                    console.error(err);
+                  }
+                },
+              );
+            }
+          })
+          .catch(console.error);
+      } else {
+        fs.readFile(
+          path.join(
+            app.getPath('documents'),
+            'BrowserBook',
+            'Bookmarks',
+            'bookmarks.json',
+          ),
+          'utf8',
+          (err, data) => {
+            if (err) {
+              console.error(err);
+              return;
+            }
+            try {
+              const jsonData = JSON.parse(data);
+
+              // Create new bookmark data
+              const newBookmark = {
+                id: jsonData.nextId,
+                type: 'article',
+                title: reader.title,
+                content: reader,
+                url: arg,
+              };
+
+              // Increment count and nextId
+              jsonData.count++;
+              jsonData.nextId++;
+
+              // Add the new bookmark to bookmarks array
+              jsonData.bookmarks.push(newBookmark);
+
+              // Convert object back to JSON
+              const updatedJsonData = JSON.stringify(jsonData, null, 2);
+
+              // Write the updated JSON back to the file
+              fs.writeFile(
+                path.join(
+                  app.getPath('documents'),
+                  'BrowserBook',
+                  'Bookmarks',
+                  'bookmarks.json',
+                ),
+                updatedJsonData,
+                'utf8',
+                (err) => {
+                  if (err) {
+                    console.error(err);
+                    return;
+                  }
+                  console.log('Data added successfully!');
+                },
+              );
+            } catch (err) {
+              console.error(err);
+            }
+          },
+        );
+      }
+    } else {
+      console.error('No reader found');
+    }
   } catch (err) {
     console.error(err);
   }
@@ -107,6 +420,7 @@ const createWindow = async () => {
     height: 728,
     icon: getAssetPath('icon.png'),
     webPreferences: {
+      webviewTag: true,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),

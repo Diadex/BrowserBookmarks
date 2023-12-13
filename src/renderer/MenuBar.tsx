@@ -13,9 +13,11 @@ import Bookmarker from './Bookmarker';
 interface MenuBarProps {
   onGoClick: (url: string) => void;
   onSaveAsArticleClick: () => void;
+  onToggleEncryptionClick: () => void;
+  onSaveURLClick: () => void;
 }
 
-function MenuBar({ onGoClick, onSaveAsArticleClick }: MenuBarProps) {
+function MenuBar({ onGoClick, onSaveAsArticleClick, onToggleEncryptionClick, onSaveURLClick }: MenuBarProps) {
   const [isBookmarkOpen, setIsBookmarkOpen] = useState(false);
   const [refreshIconSrc, setRefreshIconSrc] = useState(refreshIcon);
   const [centeredText, setCenteredText] = useState('');
@@ -189,7 +191,11 @@ function MenuBar({ onGoClick, onSaveAsArticleClick }: MenuBarProps) {
 
       {isBookmarkerOpen && (
         <div style={{ position: 'absolute', top: 0, right: 0, zIndex: 9999 }}>
-          <Bookmarker handleSaveAsArticleClick={onSaveAsArticleClick} />
+          <Bookmarker
+            handleSaveAsArticleClick={onSaveAsArticleClick}
+            onToggleEncryptionClick={onToggleEncryptionClick}
+            onSaveURLClick={onSaveURLClick}
+          />
         </div>
       )}
 
