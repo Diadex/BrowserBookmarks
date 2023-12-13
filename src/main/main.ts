@@ -454,8 +454,8 @@ ipcMain.handle('save-readable', async (event, arg) => {
                 id: jsonData.nextId,
                 type: 'article',
                 title: reader.title,
-                content: reader,
-                url: arg,
+                content: reader.content,
+                url: arg.url,
               };
 
               // Increment count and nextId
