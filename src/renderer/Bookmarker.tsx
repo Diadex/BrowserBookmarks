@@ -1,13 +1,15 @@
 import { on } from 'events';
 import React, { useState } from 'react';
 
+
 interface BookmarkerProps {
   handleSaveAsArticleClick: () => void;
   onToggleEncryptionClick: () => void;
   onSaveURLClick: () => void;
+  addTab: (value:number) => void;
 }
 
-const Bookmarker = ({ handleSaveAsArticleClick, onToggleEncryptionClick, onSaveURLClick }: BookmarkerProps) => {
+const Bookmarker = ({ handleSaveAsArticleClick, onToggleEncryptionClick, onSaveURLClick, addTab }: BookmarkerProps) => {
   const [colorA, setColorA] = useState('white');
   const [colorC, setColorC] = useState('white');
   const [colorE, setColorE] = useState('white');
@@ -20,6 +22,8 @@ const Bookmarker = ({ handleSaveAsArticleClick, onToggleEncryptionClick, onSaveU
 
   const handleClickE = () => {
     setColorE(colorE === 'white' ? 'blue' : 'white');
+    // add tab'dan ekle
+    addTab(1)
   };
 
   return (

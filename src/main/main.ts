@@ -20,6 +20,14 @@ import jsdom from 'jsdom';
 import prompt from 'electron-prompt';
 import jfe from 'json-file-encrypt';
 
+/*
+app.on('before-quit', () => {
+  // Your workaround code here
+  // For example, you can force the app to quit
+  app.quit();
+});*/
+
+
 class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -420,13 +428,13 @@ const createWindow = async () => {
     height: 728,
     icon: getAssetPath('icon.png'),
     webPreferences: {
+      nodeIntegration: true,
       webviewTag: true,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
-
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
   mainWindow.on('ready-to-show', () => {
