@@ -9,7 +9,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
+import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -20,14 +20,6 @@ import jsdom from 'jsdom';
 import prompt from 'electron-prompt';
 import jfe from 'json-file-encrypt';
 
-/*
-app.on('before-quit', () => {
-  // Your workaround code here
-  // For example, you can force the app to quit
-  app.quit();
-});*/
-
-
 class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -37,12 +29,172 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+let childWindow: BrowserWindow | null = null;
 const { JSDOM } = jsdom;
 
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
   console.log(msgTemplate(arg));
   event.reply('ipc-example', msgTemplate('pong'));
+});
+
+ipcMain.handle('delete-bookmark', async (event, arg) => {
+  const bookmarks = JSON.parse(
+    fs.readFileSync(
+      path.join(
+        app.getPath('documents'),
+        'BrowserBook',
+        'Bookmarks',
+        'bookmarks.json',
+      ),
+      'utf8',
+    ),
+  ).bookmarks;
+  bookmarks.splice(
+    bookmarks.findIndex((bookmark: any) => bookmark.id === arg),
+    1,
+  );
+  fs.writeFileSync(
+    path.join(
+      app.getPath('documents'),
+      'BrowserBook',
+      'Bookmarks',
+      'bookmarks.json',
+    ),
+    JSON.stringify(
+      {
+        count: bookmarks.length,
+        nextId: bookmarks.length + 1,
+        bookmarks: bookmarks,
+      },
+      null,
+      2,
+    ),
+  );
+  return bookmarks;
+});
+
+ipcMain.handle('get-bookmarks', async (event, arg) => {
+  const bookmarks = JSON.parse(
+    fs.readFileSync(
+      path.join(
+        app.getPath('documents'),
+        'BrowserBook',
+        'Bookmarks',
+        'bookmarks.json',
+      ),
+      'utf8',
+    ),
+  ).bookmarks;
+  return bookmarks;
+});
+
+ipcMain.handle('open-article', async (event, arg) => {
+  const bookmarks = JSON.parse(
+    fs.readFileSync(
+      path.join(
+        app.getPath('documents'),
+        'BrowserBook',
+        'Bookmarks',
+        'bookmarks.json',
+      ),
+      'utf8',
+    ),
+  ).bookmarks;
+  console.log(arg);
+  fs.writeFileSync(
+    path.join(
+      app.getPath('documents'),
+      'BrowserBook',
+      'Bookmarks',
+      arg.title + '.html',
+    ),
+    arg.content,
+  );
+  const filePath = path.join(
+    app.getPath('documents'),
+    'BrowserBook',
+    'Bookmarks',
+    arg.title + '.html',
+  );
+
+  childWindow = new BrowserWindow({
+    show: false,
+    width: 1024,
+    height: 728,
+    parent: mainWindow,
+    webPreferences: {
+      webviewTag: true,
+      preload: app.isPackaged
+        ? path.join(__dirname, 'preload.js')
+        : path.join(__dirname, '../../.erb/dll/preload.js'),
+    },
+
+    modal: true,
+    title: arg.title,
+  });
+
+  childWindow?.loadURL(filePath);
+  childWindow?.on('ready-to-show', () => {
+    if (!childWindow) {
+      throw new Error('"childWindow" is not defined');
+    }
+    if (process.env.START_MINIMIZED) {
+      childWindow.minimize();
+    } else {
+      childWindow.show();
+    }
+  });
+
+  childWindow?.on('closed', () => {
+    childWindow = null;
+    fs.unlinkSync(filePath);
+  });
+});
+
+ipcMain.handle('decrypt-bookmark', async (event, arg) => {
+  try {
+    const id = arg;
+    const bookmarks = JSON.parse(
+      fs.readFileSync(
+        path.join(
+          app.getPath('documents'),
+          'BrowserBook',
+          'Bookmarks',
+          'bookmarks.json',
+        ),
+        'utf8',
+      ),
+    ).bookmarks;
+    const bookmark = bookmarks.find((bookmark: any) => bookmark.id === id);
+    const decryptedContent = await new Promise((resolve, reject) => {
+      prompt({
+        title: 'Enter Password',
+        label: 'Enter the password for this bookmark to decrypt it',
+        value: 'pass123',
+        type: 'input',
+      })
+        .then((r: string | null) => {
+          if (r === null) {
+            console.log('user cancelled');
+            reject(new Error('User cancelled decryption'));
+          } else {
+            console.log(r);
+            const key = new jfe.encryptor(r);
+            const decryptedBookmark = key.decrypt(bookmark.content);
+            console.log(decryptedBookmark);
+            resolve(decryptedBookmark);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          reject(error);
+        });
+    });
+    return decryptedContent;
+  } catch (error) {
+    console.error(error);
+  }
 });
 
 ipcMain.handle('save-url', async (event, arg) => {
@@ -55,7 +207,7 @@ ipcMain.handle('save-url', async (event, arg) => {
       value: 'pass123',
       type: 'input',
     })
-      .then((r: string) => {
+      .then((r: string | null) => {
         if (r === null) {
           console.log('user cancelled');
         } else {
@@ -226,13 +378,13 @@ ipcMain.handle('save-readable', async (event, arg) => {
         '<head><link rel="stylesheet" type="text/css" href="styles.css"></head>' +
         reader.content;
 
-      const filePath = path.join(
-        app.getPath('documents'),
-        'BrowserBook',
-        'Bookmarks',
-        reader.title + '.html',
-      );
-      fs.writeFileSync(filePath, reader.content);
+      // const filePath = path.join(
+      //   app.getPath('documents'),
+      //   'BrowserBook',
+      //   'Bookmarks',
+      //   reader.title + '.html',
+      // );
+      // fs.writeFileSync(filePath, reader.content);
 
       if (encryption) {
         prompt({
@@ -241,7 +393,7 @@ ipcMain.handle('save-readable', async (event, arg) => {
           value: 'pass123',
           type: 'input',
         })
-          .then((r: string) => {
+          .then((r: string | null) => {
             if (r === null) {
               console.log('user cancelled');
             } else {
@@ -265,7 +417,7 @@ ipcMain.handle('save-readable', async (event, arg) => {
                       id: jsonData.nextId,
                       type: 'article',
                       title: reader.title,
-                      content: null,
+                      content: reader.content,
                       url: url,
                     };
                     const key = new jfe.encryptor(r);
@@ -276,6 +428,7 @@ ipcMain.handle('save-readable', async (event, arg) => {
                     const newBookmarkEntry = {
                       id: jsonData.nextId,
                       type: 'encrypted',
+                      title: reader.title,
                       content: encryptedBookmark,
                     };
 
@@ -337,8 +490,8 @@ ipcMain.handle('save-readable', async (event, arg) => {
                 id: jsonData.nextId,
                 type: 'article',
                 title: reader.title,
-                content: reader,
-                url: arg,
+                content: reader.content,
+                url: arg.url,
               };
 
               // Increment count and nextId
@@ -428,13 +581,13 @@ const createWindow = async () => {
     height: 728,
     icon: getAssetPath('icon.png'),
     webPreferences: {
-      nodeIntegration: true,
       webviewTag: true,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
+
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
   mainWindow.on('ready-to-show', () => {
@@ -481,6 +634,44 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(() => {
+    if (
+      !fs.existsSync(
+        path.join(
+          app.getPath('documents'),
+          'BrowserBook',
+          'Bookmarks',
+          'bookmarks.json',
+        ),
+      )
+    ) {
+      if (!fs.existsSync(path.join(app.getPath('documents'), 'BrowserBook')))
+        fs.mkdirSync(path.join(app.getPath('documents'), 'BrowserBook'));
+      if (
+        !fs.existsSync(
+          path.join(app.getPath('documents'), 'BrowserBook', 'Bookmarks'),
+        )
+      )
+        fs.mkdirSync(
+          path.join(app.getPath('documents'), 'BrowserBook', 'Bookmarks'),
+        );
+      fs.writeFileSync(
+        path.join(
+          app.getPath('documents'),
+          'BrowserBook',
+          'Bookmarks',
+          'bookmarks.json',
+        ),
+        JSON.stringify(
+          {
+            count: 0,
+            nextId: 1,
+            bookmarks: [],
+          },
+          null,
+          2,
+        ),
+      );
+    }
     createWindow();
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
