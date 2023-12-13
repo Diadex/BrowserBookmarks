@@ -45,7 +45,7 @@ const BookmarksComponent = ({ bookmarks }: { bookmarks: any[] }) => {
           {bookmark.type !== 'encrypted' && bookmark.type !== 'article' && (
             <div>
               <h4>Content:</h4>
-              <pre>{JSON.stringify(bookmark.content, null, 2)}</pre>
+              {/* <pre>{JSON.stringify(bookmark.content, null, 2)}</pre> */}
             </div>
           )}
           {bookmark.type === 'url' && (
